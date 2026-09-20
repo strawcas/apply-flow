@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { AuthLogo } from "./auth-logo";
 import styles from "./auth.module.css";
 
 /** Shared frame for login and signup; supply the relevant form as children. */
@@ -8,7 +9,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
     <main className={styles.shell}>
       <aside className={styles.story} aria-label="About ApplyFlow">
         <Link href="/" className={styles.brand}>
-          <span className={styles.brandIcon} aria-hidden="true">↗</span>ApplyFlow<span className={styles.brandDot}>.</span>
+          <AuthLogo className={styles.brandIcon} />ApplyFlow<span className={styles.brandDot}>.</span>
         </Link>
         <div className={styles.storyContent}>
           <p className={styles.eyebrow}>YOUR NEXT CHAPTER STARTS HERE</p>

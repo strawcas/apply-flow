@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { AuthButton, AuthField } from "./auth-fields";
+import { AuthLogo } from "./auth-logo";
 import styles from "./auth.module.css";
 
 export function LoginForm() {
@@ -14,7 +15,7 @@ export function LoginForm() {
   }
   return (
     <form onSubmit={handleSubmit}>
-      <div className={styles.welcomeIcon} aria-hidden="true">↗</div>
+      <AuthLogo className={styles.welcomeIcon} />
       <header className={styles.formHeader}>
         <h1>Welcome Back</h1>
         <p>Sign in to your account to pick up where you left off.</p>
