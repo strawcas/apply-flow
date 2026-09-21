@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import { AuthButton, AuthField } from "./auth-fields";
-import { AuthLogo } from "./auth-logo";
-import styles from "./auth.module.css";
+import { AuthButton, AuthField } from "../_components/auth/auth-fields";
+import { AuthLogo } from "../_components/auth/auth-logo";
+import styles from "../_components/auth/auth.module.css";
 
 export function LoginForm() {
     const [message, setMessage] = useState("");
