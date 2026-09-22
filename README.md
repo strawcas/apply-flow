@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Google authentication
+
+See [Google signup setup](docs/google-auth-setup.md) for Google Cloud and Supabase configuration, environment variables, the profile migration, and verification steps. Registration requires a full name, birthdate, and a separate email confirmation before dashboard access.
+
 ## Getting Started
 
 First, run the development server:

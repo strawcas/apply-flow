@@ -609,6 +609,15 @@
     border-radius: 6px;
     padding: 8px;
 }
+.signOutButton {
+    margin-top: 24px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: white;
+    color: var(--ink);
+    cursor: pointer;
+}
 .addForm {
     display: flex;
     flex-wrap: wrap;

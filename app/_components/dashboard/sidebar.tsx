@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AuthLogo } from "@/app/_components/auth/auth-logo";
 import Icon, { type IconName } from "./dashboard-icon";
 import styles from "./dashboard.module.css";
+import { signOut } from "@/app/_actions/auth";
 
 const navigation: { href: string; label: string; icon: IconName }[] = [
     { href: "/dashboard", label: "Dashboard", icon: "overview" },
@@ -63,6 +64,7 @@ export default function Sidebar() {
                         );
                     })}
                 </ul>
+                <form action={signOut}><button type="submit" className={styles.signOutButton}>Sign out</button></form>
             </nav>
         </aside>
     );

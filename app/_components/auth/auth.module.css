@@ -70,6 +70,10 @@
 .switchForm a { color: var(--accent); font-weight: 600; margin-left: 3px; }
 .message { color: #1e40af; background: #eff6ff; border-radius: 6px; padding: 12px; font-size: 12px; line-height: 1.6; }
 .emptyMessage { margin: 0; }
+.googleButton { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 52px; padding: 12px 18px; border: 1px solid #747775; border-radius: 7px; background: #fff; color: #1f1f1f; font-size: 16px; font-weight: 500; cursor: pointer; }
+.googleButton:hover { background: #f0f4f9; }
+.googleButton:disabled { opacity: .65; cursor: wait; }
+.googleButton svg { flex-shrink: 0; }
 /* Keep account forms comfortably readable, including on mobile devices. */
 .formHeader p, .switchForm, .message { font-size: 16px; }
 .field > label, .options { font-size: 14px; }

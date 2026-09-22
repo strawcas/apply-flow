@@ -26,6 +26,7 @@ export function AuthField({ label, id, type = "text", ...props }: AuthFieldProps
                         aria-label={visible ? "Hide password" : "Show password"}
                         aria-pressed={visible}
                         aria-controls={id}
+                        tabIndex={-1}
                     >
                         <svg
                             width="20"

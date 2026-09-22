@@ -1,4 +1,7 @@
-export default function SettingsPage() {
+import { requireAccount } from "@/app/_lib/require-account";
+
+export default async function SettingsPage() {
+    await requireAccount();
     return (
         <header>
             <h1>Settings</h1>

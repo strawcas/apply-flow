@@ -1,4 +1,7 @@
-export default function CalendarPage() {
+import { requireAccount } from "@/app/_lib/require-account";
+
+export default async function CalendarPage() {
+    await requireAccount();
     return (
         <header>
             <h1>Calendar</h1>

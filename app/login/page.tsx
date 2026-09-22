@@ -7,10 +7,11 @@ export const metadata: Metadata = {
     description: "Sign in to your ApplyFlow account.",
 };
 
-export default function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ notice?: string }> }) {
+    const { notice } = await searchParams;
     return (
         <AuthShell>
-            <LoginForm />
+            <LoginForm notice={typeof notice === "string" ? notice : undefined} />
         </AuthShell>
     );
 }
