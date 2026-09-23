@@ -4,6 +4,7 @@ export type IconName =
     | "calendar"
     | "profile"
     | "settings"
+    | "sign-out"
     | "activity"
     | "goal"
     | "arrow"
@@ -20,6 +21,7 @@ const paths: Record<IconName, string> = {
     calendar: "M3 5h18v16H3z M3 10h18 M7 3v4 M17 3v4 M7 14h2 M15 14h2 M7 17h2",
     profile: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2",
     settings: "M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6",
+    "sign-out": "M9 4H4v16h5 M9 12h12 M17 8l4 4-4 4",
     overview: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
     applications: "M8 6V3h8v3 M3 7h18v14H3z M3 12h18 M10 12v3h4v-3",
     activity: "M3 12h4l3-8 4 16 3-8h4",

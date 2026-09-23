@@ -2,9 +2,11 @@ import type { ReactNode } from "react";
 import Sidebar from "@/app/_components/dashboard/sidebar";
 import styles from "@/app/_components/dashboard/dashboard.module.css";
 import { requireAccount } from "@/app/_lib/require-account";
+import { createClient } from "@/app/_lib/supabase";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
     await requireAccount();
+
     return (
         <div className={styles.layout}>
             <a href="#main-content" className={styles.skipLink}>

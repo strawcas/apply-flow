@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AuthLogo } from "@/app/_components/auth/auth-logo";
@@ -15,6 +16,17 @@ const navigation: { href: string; label: string; icon: IconName }[] = [
     { href: "/profile", label: "Profile", icon: "profile" },
     { href: "/settings", label: "Settings", icon: "settings" },
 ];
+
+function SignOutButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <button type="submit" className={styles.signOutButton} disabled={pending}>
+            <Icon name="sign-out" />
+            <span aria-live="polite">{pending ? "Signing out…" : "Sign out"}</span>
+        </button>
+    );
+}
 
 export default function Sidebar() {
     const pathname = usePathname();
@@ -64,7 +76,9 @@ export default function Sidebar() {
                         );
                     })}
                 </ul>
-                <form action={signOut}><button type="submit" className={styles.signOutButton}>Sign out</button></form>
+                <form action={signOut} className={styles.signOutForm}>
+                    <SignOutButton />
+                </form>
             </nav>
         </aside>
     );

@@ -609,14 +609,51 @@
     border-radius: 6px;
     padding: 8px;
 }
+.signOutForm {
+    margin-top: auto;
+    padding-top: 24px;
+}
+.signOutForm::before {
+    content: "";
+    display: block;
+    height: 1px;
+    margin-bottom: 16px;
+    background: var(--line);
+}
 .signOutButton {
-    margin-top: 24px;
-    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    width: 100%;
+    min-height: 48px;
+    padding: 13px 15px;
     border: 1px solid var(--line);
-    border-radius: 6px;
-    background: white;
-    color: var(--ink);
-    cursor: pointer;
+    border-radius: 7px;
+    background: #f8fafc;
+    color: #66758c;
+    font-weight: 500;
+    text-align: left;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+.signOutButton svg {
+    flex-shrink: 0;
+}
+.signOutButton:hover:not(:disabled) {
+    background: #fff1f2;
+    border-color: #ffe4e6;
+    color: #be123c;
+}
+.signOutButton:active:not(:disabled) {
+    background: #ffe4e6;
+}
+.signOutButton:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+@media (prefers-reduced-motion: reduce) {
+    .signOutButton {
+        transition: none;
+    }
 }
 .addForm {
     display: flex;

@@ -29,6 +29,7 @@ export const relations = defineRelations(schema, (r) => ({
 		}),
 		webauthnChallengesInAuths: r.many.webauthnChallengesInAuth(),
 		webauthnCredentialsInAuths: r.many.webauthnCredentialsInAuth(),
+		users: r.many.users(),
 	},
 	mfaAmrClaimsInAuth: {
 		sessionsInAuth: r.one.sessionsInAuth({
@@ -140,6 +141,19 @@ export const relations = defineRelations(schema, (r) => ({
 	webauthnCredentialsInAuth: {
 		usersInAuth: r.one.usersInAuth({
 			from: r.webauthnCredentialsInAuth.userId,
+			to: r.usersInAuth.id
+		}),
+	},
+	applications: {
+		user: r.one.users({
+			from: r.applications.userId,
+			to: r.users.userId
+		}),
+	},
+	users: {
+		applications: r.many.applications(),
+		usersInAuth: r.one.usersInAuth({
+			from: r.users.userId,
 			to: r.usersInAuth.id
 		}),
 	},
