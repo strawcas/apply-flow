@@ -9,17 +9,19 @@
 - Production build, TypeScript checks, nine access/validation tests, and the PostgreSQL confirmation-token integration test passed. ESLint has no errors and four existing unused-variable warnings.
 - A real Google signup and confirmation-email round trip remains to be tested after provider configuration.
 
+September 23, 2026: renamed the application profile table to `public.users`, preserving its data and access restrictions.
+
 ## What the app does
 
 1. **Sign up → Continue with Google** authenticates a Google account.
 2. **Finish signing up** asks for a full name and birthdate. Email comes from the authenticated Supabase user, never from a submitted form field. The Google name is only an editable suggestion; no Google birthday permission is requested.
-3. The server saves a registration in `public.applyflow_profiles` and sends a separate confirmation email using the existing Nodemailer/Gmail configuration.
+3. The server saves a registration in `public.users` and sends a separate confirmation email using the existing Nodemailer/Gmail configuration.
 4. The email opens a confirmation page. Clicking **Confirm email address** activates the registration, then the user can sign in with Google.
 5. **Sign in → Continue with Google** requires an existing registration. New users are signed out of that local session and told to sign up first. Pending registrations go to the confirmation screen.
 
 Supabase Google OAuth uses one endpoint for signup and login. It can create an `auth.users` identity even when someone starts at Sign in. That identity is not an ApplyFlow registration and grants no dashboard access. The app does not delete Auth identities or overwrite existing profile data during repeat signup.
 
-Google's verified identity and ApplyFlow's post-signup email confirmation are separate. The latter is stored in `applyflow_profiles.email_confirmed_at`, not Supabase's `auth.users.email_confirmed_at`.
+Google's verified identity and ApplyFlow's post-signup email confirmation are separate. The latter is stored in `public.users.email_confirmed_at`, not Supabase's `auth.users.email_confirmed_at`.
 
 ## 1. Environment
 
@@ -36,15 +38,17 @@ GMAIL_APP_PASSWORD=YOUR_GMAIL_APP_PASSWORD
 
 Use your real HTTPS origin for `NEXT_PUBLIC_SITE_URL` in production. A fixed configured origin prevents spoofed request headers from controlling confirmation URLs. Gmail's app password is a server secret, not your normal account password. For production volume, replace the transporter with your transactional SMTP provider.
 
-## 2. Profile table
+## 2. Application users table
 
-Run only the additive app migration:
+Run the app migrations:
 
 ```sh
 node scripts/auth-database.mjs --apply
 ```
 
-Alternatively paste `supabase/migrations/202609220001_applyflow_profiles.sql` into the Supabase SQL Editor and run it. The migration creates the profile table and enables RLS. Browser roles have no access; Next.js accesses it using the server's `DATABASE_URL`.
+The script creates the initial profile table on a new installation, then renames it to `public.users`. On an existing installation, it preserves the table's rows, RLS, grants, and foreign keys. Rerunning the script does not recreate `applyflow_profiles`.
+
+Alternatively, use the Supabase SQL Editor. For a new installation, first run `supabase/migrations/202609220001_applyflow_profiles.sql`. Then run `supabase/migrations/202609230001_rename_profiles_to_users.sql`. If `applyflow_profiles` already exists, run only the rename migration; if the rename is already applied, do not rerun the initial migration. The rename refuses to overwrite an existing `public.users` table. Browser roles have no access; Next.js accesses `public.users` using the server's `DATABASE_URL`. Supabase's separate `auth.users` table is unchanged.
 
 Check the result with `node scripts/auth-database.mjs`: RLS should be true and both browser-access flags false. Do not use the existing introspected Drizzle migration to set up this flow: it contains Supabase-managed schemas.
 
