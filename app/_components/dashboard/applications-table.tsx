@@ -9,7 +9,8 @@ type Application = {
     company: string;
     role: string;
     location: string;
-    workType: string;
+    workArrangement: "Remote" | "Hybrid" | "On-site";
+    employmentType: "Full-time" | "Part-time" | "Contractual" | "Gig";
     status: ApplicationStatus;
     appliedAt: string;
     appliedLabel: string;
@@ -24,8 +25,9 @@ const placeholderApplications: Application[] = [
         id: "sample-linear",
         company: "Linear",
         role: "Product Designer",
-        location: "Remote",
-        workType: "Full-time",
+        location: "San Francisco, CA",
+        workArrangement: "Remote",
+        employmentType: "Full-time",
         status: "Interview",
         appliedAt: "2026-09-18",
         appliedLabel: "Sep 18, 2026",
@@ -38,7 +40,8 @@ const placeholderApplications: Application[] = [
         company: "Notion",
         role: "Frontend Developer",
         location: "San Francisco, CA",
-        workType: "Hybrid · Full-time",
+        workArrangement: "Hybrid",
+        employmentType: "Full-time",
         status: "Applied",
         appliedAt: "2026-09-17",
         appliedLabel: "Sep 17, 2026",
@@ -50,8 +53,9 @@ const placeholderApplications: Application[] = [
         id: "sample-figma",
         company: "Figma",
         role: "UX Designer",
-        location: "Remote",
-        workType: "Full-time",
+        location: "New York, NY",
+        workArrangement: "Remote",
+        employmentType: "Part-time",
         status: "In review",
         appliedAt: "2026-09-16",
         appliedLabel: "Sep 16, 2026",
@@ -64,7 +68,8 @@ const placeholderApplications: Application[] = [
         company: "Spotify",
         role: "Product Designer",
         location: "New York, NY",
-        workType: "Hybrid · Full-time",
+        workArrangement: "Hybrid",
+        employmentType: "Full-time",
         status: "Offer",
         appliedAt: "2026-09-15",
         appliedLabel: "Sep 15, 2026",
@@ -76,8 +81,9 @@ const placeholderApplications: Application[] = [
         id: "sample-stripe",
         company: "Stripe",
         role: "Frontend Engineer",
-        location: "Remote",
-        workType: "Full-time",
+        location: "San Francisco, CA",
+        workArrangement: "Remote",
+        employmentType: "Full-time",
         status: "Applied",
         appliedAt: "2026-09-14",
         appliedLabel: "Sep 14, 2026",
@@ -89,8 +95,9 @@ const placeholderApplications: Application[] = [
         id: "sample-dropbox",
         company: "Dropbox",
         role: "Design Engineer",
-        location: "Remote",
-        workType: "Full-time",
+        location: "Seattle, WA",
+        workArrangement: "Remote",
+        employmentType: "Gig",
         status: "Interview",
         appliedAt: "2026-09-12",
         appliedLabel: "Sep 12, 2026",
@@ -103,7 +110,8 @@ const placeholderApplications: Application[] = [
         company: "Airbnb",
         role: "UX Researcher",
         location: "San Francisco, CA",
-        workType: "On-site · Full-time",
+        workArrangement: "On-site",
+        employmentType: "Full-time",
         status: "Rejected",
         appliedAt: "2026-09-10",
         appliedLabel: "Sep 10, 2026",
@@ -115,8 +123,9 @@ const placeholderApplications: Application[] = [
         id: "sample-miro",
         company: "Miro",
         role: "Product Designer",
-        location: "Remote",
-        workType: "Contract",
+        location: "Amsterdam, NL",
+        workArrangement: "Remote",
+        employmentType: "Contractual",
         status: "In review",
         appliedAt: "2026-09-09",
         appliedLabel: "Sep 9, 2026",
@@ -137,14 +146,14 @@ const statusStyles: Record<ApplicationStatus, string> = {
 export default function ApplicationsTable() {
     return (
         <div className={styles.page}>
-            <header className={dashboard.heading}>
+            <header className={styles.heading}>
                 <div>
-                    <p className={dashboard.eyebrow}>YOUR NEXT OPPORTUNITY</p>
+                    <p className={styles.eyebrow}>YOUR NEXT OPPORTUNITY</p>
                     <h1>Applications</h1>
                     <p>Every opportunity, from the first application to the final offer.</p>
                 </div>
                 {/* Controls are intentionally disabled until application logic is added. */}
-                <button type="button" className={dashboard.primaryButton} disabled title="Design preview">
+                <button type="button" className={styles.addButton} disabled title="Design preview">
                     <Icon name="plus" /> Add application
                 </button>
             </header>
@@ -189,6 +198,8 @@ export default function ApplicationsTable() {
                                 <th scope="col">Company &amp; role</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Location</th>
+                                <th scope="col">Work arrangement</th>
+                                <th scope="col">Employment type</th>
                                 <th scope="col">Date applied</th>
                                 <th scope="col">Next step</th>
                                 <th scope="col"><span className={dashboard.srOnly}>Actions</span></th>
@@ -214,12 +225,9 @@ export default function ApplicationsTable() {
                                             {application.status}
                                         </span>
                                     </td>
-                                    <td>
-                                        <div className={styles.cellStack}>
-                                            <span className={styles.cellPrimary}>{application.location}</span>
-                                            <span>{application.workType}</span>
-                                        </div>
-                                    </td>
+                                    <td className={styles.cellPrimary}>{application.location}</td>
+                                    <td className={styles.cellPrimary}>{application.workArrangement}</td>
+                                    <td className={styles.cellPrimary}>{application.employmentType}</td>
                                     <td className={styles.date}>
                                         <time dateTime={application.appliedAt}>{application.appliedLabel}</time>
                                     </td>
