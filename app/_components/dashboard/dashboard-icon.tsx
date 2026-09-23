@@ -11,7 +11,11 @@ export type IconName =
     | "plus"
     | "menu"
     | "close"
-    | "check";
+    | "check"
+    | "more"
+    | "chevron-left"
+    | "chevron-right"
+    | "sort";
 const paths: Record<IconName, string> = {
     calendar: "M3 5h18v16H3z M3 10h18 M7 3v4 M17 3v4 M7 14h2 M15 14h2 M7 17h2",
     profile: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2",
@@ -26,6 +30,10 @@ const paths: Record<IconName, string> = {
     menu: "M3 6h18 M3 12h18 M3 18h18",
     close: "M6 6l12 12 M6 18 18 6",
     check: "M5 12l4 4L19 6",
+    more: "M5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2 M12 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2 M19 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2",
+    "chevron-left": "M15 6l-6 6 6 6",
+    "chevron-right": "M9 6l6 6-6 6",
+    sort: "M8 4v16 M4 8l4-4 4 4 M16 20V4 M12 16l4 4 4-4",
 };
 export default function DashboardIcon({ name }: { name: IconName }) {
     return (
