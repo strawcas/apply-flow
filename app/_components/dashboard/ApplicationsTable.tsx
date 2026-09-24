@@ -1,138 +1,8 @@
 import Icon from "@/app/_components/dashboard/dashboard-icon";
-import { applicationColors } from "@/app/_components/dashboard/application-colors";
-import { getAllApplicationsById, getAllApplicationsCurrentUser } from "@/app/_db/applications";
+import { getAllApplicationsCurrentUser } from "@/app/_db/applications";
+import ApplicationsTableRow from "@/app/_components/dashboard/ApplicationsTableRow";
 
 type ApplicationStatus = "Applied" | "In review" | "Interview" | "Offer" | "Rejected";
-
-type Application = {
-    id: string;
-    company: string;
-    role: string;
-    location: string;
-    workArrangement: "Remote" | "Hybrid" | "On-site";
-    employmentType: "Full-time" | "Part-time" | "Contractual" | "Gig";
-    status: ApplicationStatus;
-    appliedAt: string;
-    appliedLabel: string;
-    nextStep: string;
-    nextStepDetail: string;
-    color: "purple" | "ink" | "coral" | "green" | "blue" | "amber";
-};
-
-const placeholderApplications: Application[] = [
-    {
-        id: "sample-linear",
-        company: "Linear",
-        role: "Product Designer",
-        location: "San Francisco, CA",
-        workArrangement: "Remote",
-        employmentType: "Full-time",
-        status: "Interview",
-        appliedAt: "2026-09-18",
-        appliedLabel: "Sep 18, 2026",
-        nextStep: "Design interview",
-        nextStepDetail: "Sep 25 · 10:00 AM",
-        color: "purple",
-    },
-    {
-        id: "sample-notion",
-        company: "Notion",
-        role: "Frontend Developer",
-        location: "San Francisco, CA",
-        workArrangement: "Hybrid",
-        employmentType: "Full-time",
-        status: "Applied",
-        appliedAt: "2026-09-17",
-        appliedLabel: "Sep 17, 2026",
-        nextStep: "Awaiting response",
-        nextStepDetail: "Application submitted",
-        color: "ink",
-    },
-    {
-        id: "sample-figma",
-        company: "Figma",
-        role: "UX Designer",
-        location: "New York, NY",
-        workArrangement: "Remote",
-        employmentType: "Part-time",
-        status: "In review",
-        appliedAt: "2026-09-16",
-        appliedLabel: "Sep 16, 2026",
-        nextStep: "Portfolio review",
-        nextStepDetail: "With the hiring team",
-        color: "coral",
-    },
-    {
-        id: "sample-spotify",
-        company: "Spotify",
-        role: "Product Designer",
-        location: "New York, NY",
-        workArrangement: "Hybrid",
-        employmentType: "Full-time",
-        status: "Offer",
-        appliedAt: "2026-09-15",
-        appliedLabel: "Sep 15, 2026",
-        nextStep: "Review offer",
-        nextStepDetail: "Respond by Sep 28",
-        color: "green",
-    },
-    {
-        id: "sample-stripe",
-        company: "Stripe",
-        role: "Frontend Engineer",
-        location: "San Francisco, CA",
-        workArrangement: "Remote",
-        employmentType: "Full-time",
-        status: "Applied",
-        appliedAt: "2026-09-14",
-        appliedLabel: "Sep 14, 2026",
-        nextStep: "Awaiting response",
-        nextStepDetail: "Application submitted",
-        color: "purple",
-    },
-    {
-        id: "sample-dropbox",
-        company: "Dropbox",
-        role: "Design Engineer",
-        location: "Seattle, WA",
-        workArrangement: "Remote",
-        employmentType: "Gig",
-        status: "Interview",
-        appliedAt: "2026-09-12",
-        appliedLabel: "Sep 12, 2026",
-        nextStep: "Introductory call",
-        nextStepDetail: "Sep 24 · 2:30 PM",
-        color: "blue",
-    },
-    {
-        id: "sample-airbnb",
-        company: "Airbnb",
-        role: "UX Researcher",
-        location: "San Francisco, CA",
-        workArrangement: "On-site",
-        employmentType: "Full-time",
-        status: "Rejected",
-        appliedAt: "2026-09-10",
-        appliedLabel: "Sep 10, 2026",
-        nextStep: "Application closed",
-        nextStepDetail: "Keep moving forward",
-        color: "coral",
-    },
-    {
-        id: "sample-miro",
-        company: "Miro",
-        role: "Product Designer",
-        location: "Amsterdam, NL",
-        workArrangement: "Remote",
-        employmentType: "Contractual",
-        status: "In review",
-        appliedAt: "2026-09-09",
-        appliedLabel: "Sep 9, 2026",
-        nextStep: "Resume review",
-        nextStepDetail: "With the hiring team",
-        color: "amber",
-    },
-];
 
 const statusStyles: Record<ApplicationStatus, string> = {
     Applied: "text-[#396ab6] bg-[#edf3ff]",
@@ -142,18 +12,8 @@ const statusStyles: Record<ApplicationStatus, string> = {
     Rejected: "text-[#ab575b] bg-[#fdf0f1]",
 };
 
-function isApplicationStatus(value: string): value is ApplicationStatus {
-    return Object.prototype.hasOwnProperty.call(statusStyles, value);
-}
-
-function getStatusStyle(status: string): string {
-    return isApplicationStatus(status) ? statusStyles[status] : "text-gray-600 bg-gray-100";
-}
-
 export default async function ApplicationsTable() {
     const applications = await getAllApplicationsCurrentUser();
-    console.log("Drew Barrymore");
-    console.log(applications);
     return (
         <section
             className="overflow-hidden [border:1px_solid_var(--line)] rounded-[10px] bg-white"
@@ -227,63 +87,8 @@ export default async function ApplicationsTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {applications.map((application) => (
-                            <tr key={application.id}>
-                                <th scope="row">
-                                    <div className="flex items-center gap-3">
-                                        <span
-                                            className="grid place-items-center w-11 h-11 shrink-0 [border:1px_solid_#00000004] rounded-[9px] text-[24px] font-[650]"
-                                            aria-hidden="true"
-                                        >
-                                            {application.companyName.charAt(0)}
-                                        </span>
-
-                                        <div className="grid gap-[6px] text-[14px] text-[#52637d] [&_strong]:text-[var(--ink)] [&_strong]:text-[16px] [&_strong]:font-semibold">
-                                            <strong>{application.companyName}</strong>
-                                            <span>{application.jobTitle}</span>
-                                        </div>
-                                    </div>
-                                </th>
-
-                                <td>
-                                    <span
-                                        className={`inline-flex items-center gap-2 rounded-[5px] text-[14px] font-medium py-[7px] px-[11px] ${getStatusStyle(application.status)}`}
-                                    >
-                                        <span className="w-[6px] h-[6px] rounded-full bg-current" aria-hidden="true" />
-                                        {application.status}
-                                    </span>
-                                </td>
-
-                                <td className="text-[#33465f] text-[16px]">{application.location}</td>
-
-                                <td className="text-[#33465f] text-[16px]">{application.workMode}</td>
-
-                                <td className="text-[#33465f] text-[16px]">{application.employmentType}</td>
-
-                                <td className="text-[#42536d] text-[16px] tabular-nums">
-                                    <time dateTime={application.dateApplied}>{application.dateApplied}</time>
-                                </td>
-
-                                <td>
-                                    <div className="grid gap-[6px] text-[14px] text-[#52637d]">
-                                        {application.deadline && (
-                                            <span className="text-[#33465f] text-[16px]">
-                                                Deadline: {application.deadline}
-                                            </span>
-                                        )}
-                                    </div>
-                                </td>
-
-                                <td className="w-16">
-                                    <button
-                                        type="button"
-                                        className="inline-grid place-items-center w-11 h-11 [border:1px_solid_transparent] rounded-[6px] bg-transparent text-[#52637d] p-0 [&_svg]:w-5 [&_svg]:h-5"
-                                        aria-label={`More actions for ${application.companyName} ${application.jobTitle}`}
-                                    >
-                                        <Icon name="more" />
-                                    </button>
-                                </td>
-                            </tr>
+                        {applications.map((application, index) => (
+                            <ApplicationsTableRow applicationData={application} key={`ApplicationsTableRow${index}`} />
                         ))}
                     </tbody>
                 </table>

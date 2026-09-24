@@ -28,3 +28,6 @@ export async function createApplication(data: typeof applications.$inferInsert) 
 
     return application;
 }
+export async function deleteApplicationById(id: number) {
+    await db.delete(applications).where(eq(applications.id, id));
+}

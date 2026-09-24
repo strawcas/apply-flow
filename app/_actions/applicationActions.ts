@@ -1,6 +1,6 @@
 "use server";
 
-import { createApplication } from "@/app/_db/applications";
+import { createApplication, deleteApplicationById } from "@/app/_db/applications";
 import { session } from "@/app/_lib/session";
 import { redirect } from "next/navigation";
 
@@ -34,6 +34,10 @@ export async function addApplication(formData: FormData) {
     console.log(application);
 
     await createApplication(application);
+}
+
+export async function deleteApplicationAction(applicationId: number) {
+    return await deleteApplicationById(applicationId);
 }
 
 function getString(formData: FormData, name: string) {

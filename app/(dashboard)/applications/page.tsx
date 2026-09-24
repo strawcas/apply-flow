@@ -1,6 +1,7 @@
-import AddApplicationModal from "@/app/_components/dashboard/AddApplicationModal";
+import AddApplication from "@/app/_components/dashboard/AddApplication";
 import ApplicationsTable from "@/app/_components/dashboard/ApplicationsTable";
 import { Suspense } from "react";
+import { LoadingSpinner } from "@/app/_components/loading-spinner";
 
 export default async function ApplicationsPage() {
     return (
@@ -13,11 +14,10 @@ export default async function ApplicationsPage() {
                     <h1>Applications</h1>
                     <p>Every opportunity, from the first application to the final offer.</p>
                 </div>
-                {/* Controls are intentionally disabled until application logic is added. */}
-                <AddApplicationModal />
+                <AddApplication />
             </header>
-            {/*We put the section here cuh*/}
-            <Suspense>
+            {/*why is it no*/}
+            <Suspense fallback={<LoadingSpinner />}>
                 <ApplicationsTable />
             </Suspense>
             <p className="mt-5 mb-0 text-[#52637d] text-[14px] leading-[1.6] mx-0">

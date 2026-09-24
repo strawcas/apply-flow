@@ -1,19 +1,19 @@
 type LoadingSpinnerProps = {
     label?: string;
-    size?: "sm" | "md" | "lg";
+    size?: "s" | "m" | "l";
     showLabel?: boolean;
     className?: string;
 };
 
 const sizes = {
-    sm: "size-4",
-    md: "size-6",
-    lg: "size-10",
+    s: "size-4",
+    m: "size-6",
+    l: "size-10",
 };
 
 export function LoadingSpinner({
     label = "Loading…",
-    size = "md",
+    size = "m",
     showLabel = false,
     className = "",
 }: LoadingSpinnerProps) {
