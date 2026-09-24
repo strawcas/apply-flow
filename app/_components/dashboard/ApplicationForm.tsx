@@ -1,37 +1,10 @@
 "use client";
 
-import Modal from "@/app/_components/Modal";
+import Modal, { useModal } from "@/app/_components/Modal";
 import { addApplication } from "@/app/_actions/applicationActions";
+import type { applications } from "@/drizzle/schema";
 
-type ApplicationStatus = "Applied" | "In review" | "Interview" | "Offer" | "Rejected";
-
-type WorkMode = "Remote" | "Hybrid" | "On-site";
-
-type EmploymentType = "Full-time" | "Part-time" | "Contractual" | "Gig";
-
-type Currency = "PHP" | "USD" | "EUR" | "GBP" | "AUD" | "CAD" | "SGD" | "JPY";
-
-type ApplicationFormValues = {
-    companyName: string;
-    jobTitle: string;
-
-    status: ApplicationStatus;
-    location: string;
-    workMode: WorkMode;
-    employmentType: EmploymentType;
-
-    jobUrl?: string | null;
-    source?: string | null;
-
-    salaryMin?: string | null;
-    salaryMax?: string | null;
-    currency?: Currency | null;
-
-    dateApplied?: string | null;
-    deadline?: string | null;
-
-    notes?: string | null;
-};
+type ApplicationFormValues = Omit<typeof applications.$inferSelect, "id" | "createdAt" | "userId">;
 
 type FormAction = (formData: FormData) => void | Promise<void>;
 
@@ -51,6 +24,13 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
     const isEdit = type === "edit";
 
     const action = type === "add" ? (submitAction ?? addApplication) : submitAction;
+
+    const { close } = useModal();
+
+    async function handleAction(formData: FormData) {
+        await action(formData);
+        close();
+    }
 
     const inputStyles =
         "w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 [&:is(input,select)]:[font:inherit] outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10";
@@ -83,7 +63,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                 </Modal.Close>
             </header>
 
-            <form action={action} className="flex min-h-0 flex-1 flex-col">
+            <form action={handleAction} className="flex min-h-0 flex-1 flex-col">
                 <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
@@ -293,7 +273,16 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </label>
                 </div>
 
-                <footer className="flex shrink-0 justify-end gap-3 border-t border-zinc-200 bg-white px-6 py-4">
+                <footer className="flex shrink-0 flex-wrap justify-end gap-3 border-t border-zinc-200 bg-white px-6 py-4">
+                    {isEdit && (
+                        <button
+                            type="button"
+                            className="[font:inherit] mr-auto cursor-pointer appearance-none rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-medium text-red-600 outline-none transition hover:bg-red-50 focus-visible:ring-2 focus-visible:ring-red-500/30 max-sm:w-full"
+                        >
+                            Delete
+                        </button>
+                    )}
+
                     <Modal.Close>
                         <button
                             type="button"

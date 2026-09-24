@@ -1,7 +1,10 @@
-import { applications } from "@/drizzle/schema";
+"use client";
+
+import type { applications } from "@/drizzle/schema";
 type Application = typeof applications.$inferSelect;
 import Icon from "@/app/_components/dashboard/dashboard-icon";
-import { deleteApplicationAction } from "@/app/_actions/applicationActions";
+import Modal, { useModal } from "@/app/_components/Modal";
+import EditApplication from "@/app/_components/dashboard/EditApplication";
 
 type ApplicationStatus = "Applied" | "In review" | "Interview" | "Offer" | "Rejected";
 
@@ -22,12 +25,29 @@ function getStatusStyle(status: string): string {
 }
 
 export default function ApplicationsTableRow({ applicationData }: { applicationData: Application }) {
-    async function handleDeleteApplication() {
-        await deleteApplicationAction(applicationData.id);
-    }
+    return (
+        <Modal>
+            <ApplicationRow applicationData={applicationData} />
+        </Modal>
+    );
+}
+
+function ApplicationRow({ applicationData }: { applicationData: Application }) {
+    const { open } = useModal();
 
     return (
-        <tr key={applicationData.id}>
+        <tr
+            className="cursor-pointer"
+            onDoubleClick={(event) => {
+                if (
+                    event.target instanceof Element &&
+                    event.target.closest("button, a, input, select, textarea, dialog")
+                ) {
+                    return;
+                }
+                open("edit-application");
+            }}
+        >
             <th scope="row">
                 <div className="flex items-center gap-3">
                     <span
@@ -74,13 +94,18 @@ export default function ApplicationsTableRow({ applicationData }: { applicationD
             </td>
 
             <td className="w-16">
-                <button
-                    type="button"
-                    className="inline-grid place-items-center w-11 h-11 [border:1px_solid_transparent] rounded-[6px] bg-transparent text-[#52637d] p-0 [&_svg]:w-5 [&_svg]:h-5"
-                    aria-label={`More actions for ${applicationData.companyName} ${applicationData.jobTitle}`}
-                >
-                    <Icon name="more" />
-                </button>
+                <Modal.Open opens="edit-application">
+                    <button
+                        type="button"
+                        className="inline-grid place-items-center w-11 h-11 [border:1px_solid_transparent] rounded-[6px] bg-transparent text-[#52637d] p-0 [&_svg]:w-5 [&_svg]:h-5"
+                        aria-label={`Edit application for ${applicationData.companyName} ${applicationData.jobTitle}`}
+                    >
+                        <Icon name="more" />
+                    </button>
+                </Modal.Open>
+                <div className="cursor-auto whitespace-normal">
+                    <EditApplication applicationData={applicationData} />
+                </div>
             </td>
         </tr>
     );

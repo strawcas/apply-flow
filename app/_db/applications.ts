@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "@/app/_db/index";
 import { applications } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { session } from "@/app/_lib/session";
 
 export async function getAllApplicationsById(id: string) {
@@ -30,4 +30,18 @@ export async function createApplication(data: typeof applications.$inferInsert) 
 }
 export async function deleteApplicationById(id: number) {
     await db.delete(applications).where(eq(applications.id, id));
+}
+
+export async function updateApplicationById(
+    id: number,
+    userId: string,
+    data: Omit<typeof applications.$inferInsert, "id" | "createdAt" | "userId">,
+) {
+    const [application] = await db
+        .update(applications)
+        .set(data)
+        .where(and(eq(applications.id, id), eq(applications.userId, userId)))
+        .returning();
+
+    return application;
 }

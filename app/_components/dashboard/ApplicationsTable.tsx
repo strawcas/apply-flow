@@ -87,8 +87,8 @@ export default async function ApplicationsTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {applications.map((application, index) => (
-                            <ApplicationsTableRow applicationData={application} key={`ApplicationsTableRow${index}`} />
+                        {applications.map((application) => (
+                            <ApplicationsTableRow applicationData={application} key={application.id} />
                         ))}
                     </tbody>
                 </table>

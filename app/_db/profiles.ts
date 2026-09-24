@@ -44,6 +44,16 @@ export async function createProfile(userId: string, email: string, fullName: str
         });
 }
 
+export async function updateProfile(userId: string, fullName: string, birthDate: string) {
+    const [updated] = await db
+        .update(users)
+        .set({ fullName, birthDate })
+        .where(eq(users.userId, userId))
+        .returning({ userId: users.userId });
+
+    return updated !== undefined;
+}
+
 export function hashConfirmationToken(token: string) {
     return createHash("sha256").update(token).digest("hex");
 }

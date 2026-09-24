@@ -1,14 +1,35 @@
 "use server";
 
-import { createApplication, deleteApplicationById } from "@/app/_db/applications";
+import { createApplication, deleteApplicationById, updateApplicationById } from "@/app/_db/applications";
 import { session } from "@/app/_lib/session";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 export async function addApplication(formData: FormData) {
     const user = await session("/login");
     if (!user) redirect("/login");
 
-    const application = {
+    await createApplication({ ...getApplicationValues(formData), userId: user.user_id });
+    revalidatePath("/applications");
+    revalidatePath("/dashboard");
+}
+
+export async function updateApplicationAction(applicationId: number, formData: FormData) {
+    const user = await session("/login");
+    if (!user) redirect("/login");
+    if (!Number.isSafeInteger(applicationId) || applicationId <= 0) {
+        throw new Error("Invalid application ID");
+    }
+
+    const application = await updateApplicationById(applicationId, user.user_id, getApplicationValues(formData));
+    if (!application) throw new Error("Application not found");
+
+    revalidatePath("/applications");
+    revalidatePath("/dashboard");
+}
+
+function getApplicationValues(formData: FormData) {
+    return {
         companyName: getString(formData, "companyName"),
         jobTitle: getString(formData, "jobTitle"),
         status: getString(formData, "status"),
@@ -27,17 +48,13 @@ export async function addApplication(formData: FormData) {
         dateApplied: getOptionalString(formData, "dateApplied"),
         deadline: getOptionalString(formData, "deadline"),
         notes: getOptionalString(formData, "notes"),
-
-        userId: user.user_id,
     };
-
-    console.log(application);
-
-    await createApplication(application);
 }
 
 export async function deleteApplicationAction(applicationId: number) {
-    return await deleteApplicationById(applicationId);
+    await deleteApplicationById(applicationId);
+    revalidatePath("/applications");
+    revalidatePath("/dashboard");
 }
 
 function getString(formData: FormData, name: string) {

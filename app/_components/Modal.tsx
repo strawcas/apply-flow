@@ -21,7 +21,7 @@ type ModalContextValue = {
 
 const ModalContext = createContext<ModalContextValue | null>(null);
 
-function useModal() {
+export function useModal() {
     const context = useContext(ModalContext);
 
     if (!context) {
@@ -76,11 +76,14 @@ type WindowProps = {
     "aria-labelledby"?: string;
 };
 
-function Dialog({ children, name, ...labelProps }: WindowProps) {
-    const { close } = useModal();
+function Window({ children, name, ...labelProps }: WindowProps) {
+    const { openName, close } = useModal();
     const dialogRef = useRef<HTMLDialogElement>(null);
+    const isOpen = openName === name;
 
     useEffect(() => {
+        if (!isOpen) return;
+
         const dialog = dialogRef.current;
         if (!dialog) return;
 
@@ -94,7 +97,9 @@ function Dialog({ children, name, ...labelProps }: WindowProps) {
             document.body.style.overflow = previousOverflow;
             if (previousFocus instanceof HTMLElement) previousFocus.focus();
         };
-    }, []);
+    }, [isOpen]);
+
+    if (!isOpen) return null;
 
     // Keep the dialog inside its styling scope. showModal() already places it
     // above the page without losing inherited fonts or scoped browser resets.
@@ -117,14 +122,6 @@ function Dialog({ children, name, ...labelProps }: WindowProps) {
             </div>
         </dialog>
     );
-}
-
-function Window(props: WindowProps) {
-    const { openName } = useModal();
-
-    if (openName !== props.name) return null;
-
-    return <Dialog key={props.name} {...props} />;
 }
 
 Modal.Open = Open;

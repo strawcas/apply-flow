@@ -13,6 +13,9 @@ test("registration persistence and confirmation tokens in PostgreSQL", async () 
     const hooks = registerHooks({
         resolve(specifier, context, next) {
             if (specifier === "server-only") return { url: "data:text/javascript,export {}", shortCircuit: true };
+            // Resolve app aliases when running with Node's native TypeScript support.
+            const modules = { "@/app/_db": "../app/_db/index.ts", "@/drizzle/schema": "../drizzle/schema.ts" };
+            if (modules[specifier]) return { url: new URL(modules[specifier], import.meta.url).href, shortCircuit: true };
             return next(specifier, context);
         },
     });
@@ -23,6 +26,7 @@ test("registration persistence and confirmation tokens in PostgreSQL", async () 
         const rewrite = (sql) => sql
             .replaceAll("public.applyflow_profiles", "pg_temp.applyflow_test_profiles_legacy")
             .replaceAll("public.users", "pg_temp.applyflow_test_profiles")
+            .replaceAll('"users"', '"applyflow_test_profiles"')
             .replaceAll("auth.users", "pg_temp.applyflow_test_users")
             .replaceAll("CONSTRAINT applyflow_profiles_", "CONSTRAINT applyflow_test_profiles_legacy_")
             .replace("RENAME TO users", "RENAME TO applyflow_test_profiles");
@@ -47,7 +51,9 @@ test("registration persistence and confirmation tokens in PostgreSQL", async () 
             has_table_privilege('authenticated', oid, 'SELECT,INSERT,UPDATE,DELETE') AS browser_access
             FROM pg_class WHERE oid = 'pg_temp.applyflow_test_profiles'::regclass`);
         assert.deepEqual(renamed, { old_name_gone: true, rls_enabled: true, anon_access: false, browser_access: false });
-        pg.Pool.prototype.query = function (sql, values) { return client.query(rewrite(sql), values); };
+        pg.Pool.prototype.query = function (query, values) {
+            return client.query(typeof query === "string" ? rewrite(query) : { ...query, text: rewrite(query.text) }, values);
+        };
         const profiles = await import("../app/_db/profiles.ts");
         assert.equal((await profiles.getProfile(userId)).full_name, "Original Name", "rename preserves existing registrations");
         await client.query("DELETE FROM applyflow_test_profiles WHERE user_id = $1", [userId]);
@@ -88,6 +94,22 @@ test("registration persistence and confirmation tokens in PostgreSQL", async () 
         assert.equal(await profiles.reserveConfirmation(userId, email), null, "confirmed profiles cannot get new tokens");
         await profiles.createProfile(userId, email, "Another Name", "2002-01-01");
         assert.equal((await profiles.getProfile(userId)).full_name, "Original Name");
+
+        const otherUserId = "00000000-0000-4000-8000-000000000002";
+        const otherEmail = "other-profile-test@example.invalid";
+        await client.query("INSERT INTO applyflow_test_users VALUES ($1, $2)", [otherUserId, otherEmail]);
+        await profiles.createProfile(otherUserId, otherEmail, "Other Person", "1995-01-01");
+        const beforeUpdate = await profiles.getProfile(userId);
+        const otherProfile = await profiles.getProfile(otherUserId);
+
+        assert.equal(await profiles.updateProfile(userId, "Updated Name", "1999-12-31"), true);
+        assert.deepEqual(await profiles.getProfile(userId), {
+            ...beforeUpdate,
+            full_name: "Updated Name",
+            birth_date: "1999-12-31",
+        }, "editing personal details preserves email and verification");
+        assert.deepEqual(await profiles.getProfile(otherUserId), otherProfile, "editing cannot modify another account");
+        assert.equal(await profiles.updateProfile("00000000-0000-4000-8000-000000000003", "Missing", "2000-01-01"), false);
     } finally {
         pg.Pool.prototype.query = originalQuery;
         hooks.deregister();
