@@ -1,15 +1,10 @@
 import "server-only";
-import { createHash, randomBytes } from "node:crypto";
-import { Pool } from "pg";
 
-const globalDb = globalThis as unknown as { applyflowPool?: Pool };
-const pool = globalDb.applyflowPool ?? new Pool({
-    connectionString: process.env.DATABASE_URL,
-    max: 5,
-    connectionTimeoutMillis: 8000,
-    idleTimeoutMillis: 30000,
-});
-if (process.env.NODE_ENV !== "production") globalDb.applyflowPool = pool;
+import { createHash, randomBytes } from "node:crypto";
+import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
+
+import { db } from "@/app/_db";
+import { users } from "@/drizzle/schema";
 
 export type Profile = {
     user_id: string;
@@ -20,20 +15,33 @@ export type Profile = {
 };
 
 export async function getProfile(userId: string) {
-    const result = await pool.query<Profile>(
-        `SELECT user_id, full_name, birth_date::text, email, email_confirmed_at
-         FROM public.users WHERE user_id = $1`, [userId],
-    );
-    return result.rows[0] ?? null;
+    const [profile] = await db
+        .select({
+            user_id: users.userId,
+            full_name: users.fullName,
+            birth_date: users.birthDate,
+            email: users.email,
+            email_confirmed_at: users.emailConfirmedAt,
+        })
+        .from(users)
+        .where(eq(users.userId, userId));
+
+    return profile ?? null;
 }
 
 export async function createProfile(userId: string, email: string, fullName: string, birthDate: string) {
     // A repeated signup must never overwrite an existing registration.
-    await pool.query(
-        `INSERT INTO public.users (user_id, email, full_name, birth_date)
-         VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO NOTHING`,
-        [userId, email, fullName, birthDate],
-    );
+    await db
+        .insert(users)
+        .values({
+            userId,
+            email,
+            fullName,
+            birthDate,
+        })
+        .onConflictDoNothing({
+            target: users.userId,
+        });
 }
 
 export function hashConfirmationToken(token: string) {
@@ -43,34 +51,73 @@ export function hashConfirmationToken(token: string) {
 export async function reserveConfirmation(userId: string, email: string) {
     const token = randomBytes(32).toString("hex");
     const hash = hashConfirmationToken(token);
+
     // Atomic cooldown: concurrent submissions cannot send a burst of emails.
-    const result = await pool.query(
-        `UPDATE public.users SET confirmation_token_hash = $3,
-            confirmation_expires_at = now() + interval '24 hours', confirmation_sent_at = now()
-         WHERE user_id = $1 AND email = $2 AND email_confirmed_at IS NULL
-            AND (confirmation_sent_at IS NULL OR confirmation_sent_at <= now() - interval '60 seconds')
-         RETURNING user_id`, [userId, email, hash],
-    );
-    return result.rowCount ? { token, hash } : null;
+    const [reserved] = await db
+        .update(users)
+        .set({
+            confirmationTokenHash: hash,
+            confirmationExpiresAt: sql`now() + interval '24 hours'`,
+            confirmationSentAt: sql`now()`,
+        })
+        .where(
+            and(
+                eq(users.userId, userId),
+                eq(users.email, email),
+                isNull(users.emailConfirmedAt),
+                or(isNull(users.confirmationSentAt), lte(users.confirmationSentAt, sql`now() - interval '60 seconds'`)),
+            ),
+        )
+        .returning({
+            userId: users.userId,
+        });
+
+    return reserved ? { token, hash } : null;
 }
 
 export async function discardConfirmation(userId: string, hash: string) {
-    await pool.query(
-        `UPDATE public.users SET confirmation_token_hash = NULL, confirmation_expires_at = NULL
-         WHERE user_id = $1 AND confirmation_token_hash = $2`, [userId, hash],
-    );
+    await db
+        .update(users)
+        .set({
+            confirmationTokenHash: null,
+            confirmationExpiresAt: null,
+        })
+        .where(and(eq(users.userId, userId), eq(users.confirmationTokenHash, hash)));
 }
 
 export async function confirmProfileEmail(token: string) {
     if (!/^[a-f0-9]{64}$/.test(token)) return false;
-    // Consume once, and reject links if the Supabase account email has since changed.
-    const result = await pool.query(
-        `UPDATE public.users AS p SET email_confirmed_at = now(),
-            confirmation_token_hash = NULL, confirmation_expires_at = NULL
-         FROM auth.users AS u
-         WHERE p.user_id = u.id AND p.email = u.email AND p.confirmation_token_hash = $1
-            AND p.confirmation_expires_at > now() AND p.email_confirmed_at IS NULL
-         RETURNING p.user_id`, [hashConfirmationToken(token)],
-    );
-    return result.rowCount === 1;
+
+    const hash = hashConfirmationToken(token);
+
+    const [confirmed] = await db
+        .update(users)
+        .set({
+            emailConfirmedAt: sql`now()`,
+            confirmationTokenHash: null,
+            confirmationExpiresAt: null,
+        })
+        .where(
+            and(
+                eq(users.confirmationTokenHash, hash),
+                sql`${users.confirmationExpiresAt} > now()`,
+                isNull(users.emailConfirmedAt),
+
+                // Reject the link if the Supabase Auth email
+                // no longer matches the profile email.
+                sql`
+                    EXISTS (
+                        SELECT 1
+                        FROM auth.users AS auth_user
+                        WHERE auth_user.id = ${users.userId}
+                          AND auth_user.email = ${users.email}
+                    )
+                `,
+            ),
+        )
+        .returning({
+            userId: users.userId,
+        });
+
+    return confirmed !== undefined;
 }

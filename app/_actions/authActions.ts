@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/app/_lib/supabase";
 import { siteUrl } from "@/app/_lib/site-url";
-import { requireGoogleUser } from "@/app/_lib/require-account";
+import { requireGoogleUser } from "@/app/_lib/session";
 import { createProfile, getProfile, confirmProfileEmail } from "@/app/_db/profiles";
 import { registrationDestination, validateProfile } from "@/app/_lib/auth-policy";
 import { sendRegistrationConfirmation } from "@/app/_lib/registration-email";
@@ -23,8 +23,11 @@ async function startGoogle(intent: "login" | "signup") {
     });
     if (error || !data.url) return { message: "Google sign-in could not start. Please try again." };
     (await cookies()).set("applyflow_oauth", JSON.stringify({ intent, nonce }), {
-        httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax",
-        path: "/auth/callback", maxAge: 600,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/auth/callback",
+        maxAge: 600,
     });
     redirect(data.url);
 }
@@ -38,7 +41,10 @@ export async function signUpWithGoogle(): Promise<AuthState> {
 }
 
 export async function completeSignup(_state: AuthState, formData: FormData): Promise<AuthState> {
-    const { user, email } = await requireGoogleUser();
+    const { user, email, success } = await requireGoogleUser();
+    if (!user || !email || !success) {
+        redirect("/login");
+    }
     const fullName = formData.get("fullName");
     const birthDate = formData.get("birthDate");
     const message = validateProfile(fullName, birthDate);
@@ -60,10 +66,15 @@ export async function completeSignup(_state: AuthState, formData: FormData): Pro
 }
 
 export async function resendConfirmation(): Promise<AuthState> {
-    const { user, email } = await requireGoogleUser();
+    const { user, email, success } = await requireGoogleUser();
+    if (!user || !email || !success) {
+        redirect("/login");
+    }
+
     const profile = await getProfile(user.id);
     if (!profile) redirect("/signup/complete");
-    if (profile.email !== email) return { message: "Your account email has changed. Contact support before continuing." };
+    if (profile.email !== email)
+        return { message: "Your account email has changed. Contact support before continuing." };
     if (profile.email_confirmed_at) redirect("/dashboard");
     try {
         return { message: await sendRegistrationConfirmation(user.id, email) };
@@ -81,7 +92,11 @@ export async function confirmEmail(_state: AuthState, formData: FormData): Promi
     } catch {
         return { message: "We couldn't confirm your email. Please try again shortly." };
     }
-    if (!confirmed) return { message: "This link has expired or was already used. Sign in to request another, or continue if you've already confirmed." };
+    if (!confirmed)
+        return {
+            message:
+                "This link has expired or was already used. Sign in to request another, or continue if you've already confirmed.",
+        };
     redirect("/login?notice=confirmed");
 }
 

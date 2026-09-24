@@ -1,10 +1,13 @@
 "use server";
 
 import { createApplication } from "@/app/_db/applications";
-import { requireAccount } from "@/app/_lib/require-account";
+import { session } from "@/app/_lib/session";
+import { redirect } from "next/navigation";
 
 export async function addApplication(formData: FormData) {
-    const user = await requireAccount();
+    const user = await session("/login");
+    if (!user) redirect("/login");
+
     const application = {
         companyName: getString(formData, "companyName"),
         jobTitle: getString(formData, "jobTitle"),
@@ -30,7 +33,7 @@ export async function addApplication(formData: FormData) {
 
     console.log(application);
 
-    return createApplication(application);
+    await createApplication(application);
 }
 
 function getString(formData: FormData, name: string) {

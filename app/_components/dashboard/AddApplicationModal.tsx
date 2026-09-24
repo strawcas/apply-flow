@@ -9,7 +9,7 @@ export default function AddApplicationModal() {
     const [isOpen, setIsOpen] = useState(false);
 
     const inputStyles =
-        "w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10";
+        "w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 [&:is(input,select)]:[font:inherit] outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10";
 
     return (
         <>
@@ -17,7 +17,7 @@ export default function AddApplicationModal() {
             <button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                className="flex cursor-pointer items-center gap-3 rounded-lg border-0 bg-[#2f66f5] px-5 py-3 text-sm font-semibold text-white shadow-sm outline-none transition hover:bg-[#2859dc]"
+                className="[font:inherit] flex cursor-pointer items-center gap-3 rounded-lg border-0 bg-[#2f66f5] px-5 py-3 text-sm font-semibold text-white shadow-sm outline-none transition hover:bg-[#2859dc]"
             >
                 <Icon name="plus" />
                 Add application
@@ -55,7 +55,7 @@ export default function AddApplicationModal() {
                                 type="button"
                                 onClick={() => setIsOpen(false)}
                                 aria-label="Close modal"
-                                className="flex size-9 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-transparent text-xl text-zinc-500 outline-none transition hover:bg-zinc-100 hover:text-zinc-900"
+                                className="[font:inherit] flex size-9 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-transparent text-xl text-zinc-500 outline-none transition hover:bg-zinc-100 hover:text-zinc-900"
                             >
                                 ×
                             </button>
@@ -249,14 +249,14 @@ export default function AddApplicationModal() {
                                 <button
                                     type="button"
                                     onClick={() => setIsOpen(false)}
-                                    className="cursor-pointer appearance-none rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 outline-none transition hover:bg-zinc-50"
+                                    className="[font:inherit] cursor-pointer appearance-none rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 outline-none transition hover:bg-zinc-50"
                                 >
                                     Cancel
                                 </button>
 
                                 <button
                                     type="submit"
-                                    className="cursor-pointer appearance-none rounded-xl border-0 bg-[#2f66f5] px-5 py-2.5 text-sm font-semibold text-white outline-none transition hover:bg-[#2859dc]"
+                                    className="[font:inherit] cursor-pointer appearance-none rounded-xl border-0 bg-[#2f66f5] px-5 py-2.5 text-sm font-semibold text-white outline-none transition hover:bg-[#2859dc]"
                                 >
                                     Add application
                                 </button>

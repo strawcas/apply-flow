@@ -1,5 +1,0 @@
-.mailIcon { width: 72px; height: 72px; display: grid; place-items: center; margin-bottom: 28px; border: 1px solid #c9dcfc; border-radius: 20px; background: #eaf2ff; color: #2563eb; }
-.eyebrow { margin-bottom: 12px !important; color: #2563eb !important; font-size: 12px !important; font-weight: 600; letter-spacing: 1.8px; }
-.hint { margin-bottom: 28px; padding: 20px; border: 1px solid #dbe5f4; border-radius: 12px; background: #eef4fd; }
-.hint h2 { margin: 0 0 8px; color: #172b4d; font-size: 16px; font-weight: 600; }
-.hint p { margin: 0; color: #52627b; font-size: 16px; line-height: 1.7; }

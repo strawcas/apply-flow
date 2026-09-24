@@ -2,3 +2,50 @@
 
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+
+/* Scoped browser defaults stay in the base layer so utilities can override them. */
+@layer base {
+    :where([data-ui], [data-ui] *) {
+        box-sizing: border-box;
+    }
+
+    :where([data-ui]) a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    :where([data-ui="auth"], [data-ui="dashboard"]) :where(button, input, select) {
+        font: inherit;
+    }
+
+    :where([data-ui="dashboard"]) button {
+        cursor: pointer;
+    }
+
+    :where([data-ui="dashboard"]) section {
+        scroll-margin-top: 24px;
+    }
+
+    :where([data-ui="landing"]) :where(h1, h2, h3, p) {
+        margin: 0;
+    }
+
+    :where([data-ui="landing"]) svg {
+        flex-shrink: 0;
+    }
+
+    :where([data-ui="landing"]) a:focus-visible {
+        outline: 3px solid #285cda;
+        outline-offset: 6px;
+    }
+
+    :where([data-ui="auth"]) :focus-visible {
+        outline: 3px solid #60a5fa;
+        outline-offset: 4px;
+    }
+
+    :where([data-ui="dashboard"]) :focus-visible {
+        outline: 3px solid #93b8ff;
+        outline-offset: 4px;
+    }
+}
