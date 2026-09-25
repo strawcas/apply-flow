@@ -28,13 +28,13 @@ export function GoogleForm({ intent, notice }: { intent: "login" | "signup"; not
                 </p>
             </header>
             {message && (
-                <p role="status" className="text-[#1e40af] bg-[#eff6ff] rounded-[6px] text-[16px] leading-[1.6] p-3">
+                <p role="status" className="text-[var(--blue-text,#1e40af)] bg-[var(--blue-soft,#eff6ff)] rounded-[6px] text-[16px] leading-[1.6] p-3">
                     {message}
                 </p>
             )}
             <button
                 type="submit"
-                className="flex items-center justify-center gap-3 w-full min-h-13 [border:1px_solid_#747775] rounded-[7px] bg-white text-[#1f1f1f] text-[16px] font-normal cursor-pointer py-3 px-[18px] hover:bg-[#f0f4f9] disabled:opacity-[.65] disabled:cursor-wait [&_svg]:shrink-0"
+                className="flex items-center justify-center gap-3 w-full min-h-13 [border:1px_solid_var(--border-strong,#747775)] rounded-[7px] bg-[var(--surface,#fff)] text-[var(--text-primary,#1f1f1f)] text-[16px] font-normal cursor-pointer py-3 px-[18px] hover:bg-[var(--surface-hover,#f0f4f9)] disabled:opacity-[.65] disabled:cursor-wait [&_svg]:shrink-0"
                 disabled={pending}
             >
                 <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -54,7 +54,7 @@ export function GoogleForm({ intent, notice }: { intent: "login" | "signup"; not
                 </svg>
                 {pending ? "Opening Google…" : "Continue with Google"}
             </button>
-            <p className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent)] [&_a]:font-semibold [&_a]:ml-[3px]">
+            <p className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent-foreground,var(--accent))] [&_a]:font-semibold [&_a]:ml-[3px]">
                 {isSignup ? "Already have an account? " : "Don't have an account? "}
                 <Link href={isSignup ? "/login" : "/signup"}>{isSignup ? "Sign in" : "Sign up"}</Link>
             </p>

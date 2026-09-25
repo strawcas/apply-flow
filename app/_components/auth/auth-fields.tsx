@@ -15,11 +15,11 @@ export function AuthField({ label, id, type = "text", ...props }: AuthFieldProps
                     {...props}
                     id={id}
                     type={isPassword && visible ? "text" : type}
-                    className={`w-full h-[50px] [border:1px_solid_#d7e0ee] rounded-[7px] bg-white text-[var(--ink)] text-[16px] [transition:border-color_150ms] py-0 pl-[15px] placeholder:text-[#748399] hover:border-[#93add1] ${isPassword ? "pr-[50px] [&::-ms-reveal]:hidden" : "pr-[15px]"}`}
+                    className={`w-full h-[50px] [border:1px_solid_var(--border,#d7e0ee)] rounded-[7px] bg-[var(--surface,#fff)] text-[var(--ink)] text-[16px] [transition:border-color_150ms] py-0 pl-[15px] placeholder:text-[var(--text-muted,#748399)] hover:border-[var(--border-strong,#93add1)] ${isPassword ? "pr-[50px] [&::-ms-reveal]:hidden" : "pr-[15px]"}`}
                 />
                 {isPassword && (
                     <button
-                        className="absolute [inset:3px_3px_3px_auto] w-11 [border:0] bg-transparent text-[#64748b] cursor-pointer grid place-items-center rounded-[4px]"
+                        className="absolute [inset:3px_3px_3px_auto] w-11 [border:0] bg-transparent text-[var(--text-muted,#64748b)] cursor-pointer grid place-items-center rounded-[4px]"
                         type="button"
                         onClick={() => setVisible(!visible)}
                         aria-label={visible ? "Hide password" : "Show password"}

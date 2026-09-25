@@ -12,7 +12,7 @@ export function ResendForm() {
                 {state.message && (
                     <p
                         role="status"
-                        className="text-[#1e40af] bg-[#eff6ff] rounded-[6px] text-[16px] leading-[1.6] p-3"
+                        className="text-[var(--blue-text,#1e40af)] bg-[var(--blue-soft,#eff6ff)] rounded-[6px] text-[16px] leading-[1.6] p-3"
                     >
                         {state.message}
                     </p>
@@ -21,11 +21,11 @@ export function ResendForm() {
             </form>
             <form
                 action={signOut}
-                className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent)] [&_a]:font-semibold [&_a]:ml-[3px]"
+                className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent-foreground,var(--accent))] [&_a]:font-semibold [&_a]:ml-[3px]"
             >
                 <button
                     type="submit"
-                    className="[border:0] bg-transparent text-[var(--accent)] font-[550]! cursor-pointer py-2 px-0 hover:underline"
+                    className="[border:0] bg-transparent text-[var(--accent-foreground,var(--accent))] font-[550]! cursor-pointer py-2 px-0 hover:underline"
                 >
                     Sign out
                 </button>

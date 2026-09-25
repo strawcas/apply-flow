@@ -13,13 +13,13 @@ type Application = Pick<
 
 const statuses = ["Applied", "In review", "Interview", "Offer", "Rejected"];
 const statusStyles: Record<string, { badge: string; bar: string }> = {
-    Applied: { badge: "text-[#396ab6] bg-[#edf3ff]", bar: "bg-[#5c8ee6]" },
-    "In review": { badge: "text-[#8b691e] bg-[#fff6e6]", bar: "bg-[#d5aa51]" },
-    Interview: { badge: "text-[#7957b0] bg-[#f2edfc]", bar: "bg-[#9a7bcf]" },
-    Offer: { badge: "text-[#347b52] bg-[#edf8f0]", bar: "bg-[#61a980]" },
-    Rejected: { badge: "text-[#ab575b] bg-[#fdf0f1]", bar: "bg-[#ce858b]" },
+    Applied: { badge: "text-[var(--blue-text,#396ab6)] bg-[var(--blue-soft,#edf3ff)]", bar: "bg-[#5c8ee6]" },
+    "In review": { badge: "text-[var(--amber-text,#8b691e)] bg-[var(--amber-soft,#fff6e6)]", bar: "bg-[#d5aa51]" },
+    Interview: { badge: "text-[var(--purple-text,#7957b0)] bg-[var(--purple-soft,#f2edfc)]", bar: "bg-[#9a7bcf]" },
+    Offer: { badge: "text-[var(--green-text,#347b52)] bg-[var(--green-soft,#edf8f0)]", bar: "bg-[#61a980]" },
+    Rejected: { badge: "text-[var(--red-text,#ab575b)] bg-[var(--red-soft,#fdf0f1)]", bar: "bg-[#ce858b]" },
 };
-const fallbackStyle = { badge: "text-[#52637d] bg-[#f0f3f7]", bar: "bg-[#94a3b8]" };
+const fallbackStyle = { badge: "text-[var(--text-secondary,#52637d)] bg-[var(--surface-subtle,#f0f3f7)]", bar: "bg-[#94a3b8]" };
 const companyColors = ["blue", "purple", "coral", "green", "ink", "amber"];
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -65,10 +65,10 @@ export default function DashboardOverview({ applications }: { applications: Appl
                 {metrics.map((metric) => (
                     <article
                         key={metric.label}
-                        className="rounded-xl border border-solid border-[var(--line)] bg-white p-6 max-[600px]:p-4"
+                        className="rounded-xl border border-solid border-[var(--line)] bg-[var(--surface,#fff)] p-6 max-[600px]:p-4"
                     >
                         <div className="flex min-h-11 items-start justify-between gap-2">
-                            <h2 className="m-0 text-[14px] font-medium text-[#52637d]">{metric.label}</h2>
+                            <h2 className="m-0 text-[14px] font-medium text-[var(--text-secondary,#52637d)]">{metric.label}</h2>
                             <span
                                 className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg max-[600px]:h-8 max-[600px]:w-8 ${applicationColors[metric.color]}`}
                             >
@@ -84,7 +84,7 @@ export default function DashboardOverview({ applications }: { applications: Appl
             <div className="grid grid-cols-[minmax(0,1fr)_300px] items-start gap-6 max-[1200px]:grid-cols-1">
                 <section
                     aria-labelledby="recent-applications-title"
-                    className="min-w-0 overflow-hidden rounded-xl border border-solid border-[var(--line)] bg-white"
+                    className="min-w-0 overflow-hidden rounded-xl border border-solid border-[var(--line)] bg-[var(--surface,#fff)]"
                 >
                     <div className="flex flex-wrap items-center justify-between gap-3 p-6 max-[600px]:p-4">
                         <h2 id="recent-applications-title" className="m-0 text-[18px] font-semibold tracking-[-0.3px]">
@@ -92,14 +92,14 @@ export default function DashboardOverview({ applications }: { applications: Appl
                         </h2>
                         <Link
                             href="/applications"
-                            className="inline-flex min-h-9 items-center gap-2 font-medium text-[var(--accent)] hover:underline [&_svg]:h-4 [&_svg]:w-4"
+                            className="inline-flex min-h-9 items-center gap-2 font-medium text-[var(--accent-foreground,var(--accent))] hover:underline [&_svg]:h-4 [&_svg]:w-4"
                         >
                             View all <Icon name="arrow" />
                         </Link>
                     </div>
                     {applications.length > 0 && (
                         <div className="flex gap-3 px-6 pb-5 max-[600px]:flex-col max-[600px]:px-4">
-                            <label className="flex min-w-0 flex-1 items-center gap-3 rounded-lg border border-solid border-[var(--line)] px-3 text-[#77849a] focus-within:border-[#93b8ff] [&_svg]:shrink-0">
+                            <label className="flex min-w-0 flex-1 items-center gap-3 rounded-lg border border-solid border-[var(--line)] px-3 text-[var(--text-muted,#77849a)] focus-within:border-[var(--border-strong,#93b8ff)] [&_svg]:shrink-0">
                                 <Icon name="search" />
                                 <input
                                     type="search"
@@ -107,14 +107,14 @@ export default function DashboardOverview({ applications }: { applications: Appl
                                     placeholder="Search company or role"
                                     value={query}
                                     onChange={(event) => setQuery(event.target.value)}
-                                    className="h-11 min-w-0 w-full border-0 bg-transparent p-0 text-[14px] text-[var(--ink)] placeholder:text-[#77849a]"
+                                    className="h-11 min-w-0 w-full border-0 bg-transparent p-0 text-[14px] text-[var(--ink)] placeholder:text-[var(--text-muted,#77849a)]"
                                 />
                             </label>
                             <select
                                 aria-label="Filter applications by status"
                                 value={filter}
                                 onChange={(event) => setFilter(event.target.value)}
-                                className="min-h-11 rounded-lg border border-solid border-[var(--line)] bg-white px-3 text-[14px] text-[#52637d]"
+                                className="min-h-11 rounded-lg border border-solid border-[var(--line)] bg-[var(--surface,#fff)] px-3 text-[14px] text-[var(--text-secondary,#52637d)]"
                             >
                                 <option value="">All statuses</option>
                                 {allStatuses.map((status) => (
@@ -132,7 +132,7 @@ export default function DashboardOverview({ applications }: { applications: Appl
                             aria-label="Recent applications table"
                             tabIndex={0}
                         >
-                            <table className="w-full min-w-[560px] border-collapse text-left [&_thead_th]:border-y [&_thead_th]:border-x-0 [&_thead_th]:border-solid [&_thead_th]:border-[var(--line)] [&_thead_th]:bg-[#fafbfd] [&_thead_th]:px-6 [&_thead_th]:py-3 [&_thead_th]:text-[12px] [&_thead_th]:font-medium [&_thead_th]:text-[#66758c] [&_tbody_th]:px-6 [&_tbody_th]:py-5 [&_td]:px-6 [&_td]:py-5 [&_tbody_tr+tr]:border-t [&_tbody_tr+tr]:border-solid [&_tbody_tr+tr]:border-[#f0f3f7]">
+                            <table className="w-full min-w-[560px] border-collapse text-left [&_thead_th]:border-y [&_thead_th]:border-x-0 [&_thead_th]:border-solid [&_thead_th]:border-[var(--line)] [&_thead_th]:bg-[var(--surface-subtle,#fafbfd)] [&_thead_th]:px-6 [&_thead_th]:py-3 [&_thead_th]:text-[12px] [&_thead_th]:font-medium [&_thead_th]:text-[var(--text-muted,#66758c)] [&_tbody_th]:px-6 [&_tbody_th]:py-5 [&_td]:px-6 [&_td]:py-5 [&_tbody_tr+tr]:border-t [&_tbody_tr+tr]:border-solid [&_tbody_tr+tr]:border-[var(--border,#f0f3f7)]">
                                 <caption className="sr-only">
                                     Applications ordered by date applied, newest first
                                 </caption>
@@ -147,7 +147,7 @@ export default function DashboardOverview({ applications }: { applications: Appl
                                 </thead>
                                 <tbody>
                                     {visible.map((application) => (
-                                        <tr key={application.id} className="hover:bg-[#fbfcff]">
+                                        <tr key={application.id} className="hover:bg-[var(--surface-hover,#fbfcff)]">
                                             <th scope="row" className="font-normal">
                                                 <div className="flex items-center gap-3">
                                                     <span
@@ -160,10 +160,10 @@ export default function DashboardOverview({ applications }: { applications: Appl
                                                         <strong className="block text-[15px] font-semibold">
                                                             {application.companyName}
                                                         </strong>
-                                                        <span className="mt-1 block text-[13px] text-[#52637d]">
+                                                        <span className="mt-1 block text-[13px] text-[var(--text-secondary,#52637d)]">
                                                             {application.jobTitle}
                                                         </span>
-                                                        <span className="mt-1 block text-[12px] text-[#77849a]">
+                                                        <span className="mt-1 block text-[12px] text-[var(--text-muted,#77849a)]">
                                                             {[
                                                                 ...new Set(
                                                                     [application.location, application.workMode].filter(
@@ -186,7 +186,7 @@ export default function DashboardOverview({ applications }: { applications: Appl
                                                     {application.status}
                                                 </span>
                                             </td>
-                                            <td className="whitespace-nowrap text-[13px] text-[#66758c] tabular-nums">
+                                            <td className="whitespace-nowrap text-[13px] text-[var(--text-muted,#66758c)] tabular-nums">
                                                 {application.dateApplied ? (
                                                     <time dateTime={application.dateApplied}>
                                                         {dateFormatter.format(
@@ -204,7 +204,7 @@ export default function DashboardOverview({ applications }: { applications: Appl
                         </div>
                     ) : (
                         <div className="flex flex-col items-center gap-4 px-6 py-14 text-center">
-                            <span className="grid h-12 w-12 place-items-center rounded-xl bg-[#edf3ff] text-[#5680c7]">
+                            <span className="grid h-12 w-12 place-items-center rounded-xl bg-[var(--blue-soft,#edf3ff)] text-[var(--blue-text,#5680c7)]">
                                 <Icon name={applications.length ? "search" : "applications"} />
                             </span>
                             <p className="m-0 font-medium">
@@ -217,7 +217,7 @@ export default function DashboardOverview({ applications }: { applications: Appl
                                         setQuery("");
                                         setFilter("");
                                     }}
-                                    className="min-h-10 rounded-lg border border-solid border-[var(--line)] bg-white px-4 text-[var(--accent)] hover:bg-[#f7f9fc]"
+                                    className="min-h-10 rounded-lg border border-solid border-[var(--line)] bg-[var(--surface,#fff)] px-4 text-[var(--accent-foreground,var(--accent))] hover:bg-[var(--page,#f7f9fc)]"
                                 >
                                     Clear filters
                                 </button>
@@ -226,19 +226,19 @@ export default function DashboardOverview({ applications }: { applications: Appl
                     )}
                     <div
                         role="status"
-                        className="border-x-0 border-b-0 border-t border-solid border-[var(--line)] px-6 py-4 text-[12px] text-[#66758c] max-[600px]:px-4"
+                        className="border-x-0 border-b-0 border-t border-solid border-[var(--line)] px-6 py-4 text-[12px] text-[var(--text-muted,#66758c)] max-[600px]:px-4"
                     >
                         Showing {visible.length} of {filtered.length} {search || filter ? "matching " : ""}applications
                     </div>
                 </section>
                 <section
                     aria-labelledby="application-status-title"
-                    className="rounded-xl border border-solid border-[var(--line)] bg-white p-6 max-[600px]:p-4"
+                    className="rounded-xl border border-solid border-[var(--line)] bg-[var(--surface,#fff)] p-6 max-[600px]:p-4"
                 >
                     <h2 id="application-status-title" className="m-0 text-[18px] font-semibold tracking-[-0.3px]">
                         Application status
                     </h2>
-                    <div aria-hidden="true" className="mb-6 mt-6 flex h-2 overflow-hidden rounded-full bg-[#f0f3f7]">
+                    <div aria-hidden="true" className="mb-6 mt-6 flex h-2 overflow-hidden rounded-full bg-[var(--surface-subtle,#f0f3f7)]">
                         {allStatuses.map((status) => (
                             <span
                                 key={status}
@@ -257,7 +257,7 @@ export default function DashboardOverview({ applications }: { applications: Appl
                                     aria-pressed={filter === status}
                                     aria-label={`Filter ${status} applications`}
                                     onClick={() => setFilter(filter === status ? "" : status)}
-                                    className={`flex min-h-11 w-full items-center gap-3 rounded-lg border-0 px-3 py-2 text-left text-[14px] ${filter === status ? "bg-[#edf3ff] text-[#3567bc]" : "bg-transparent text-[#52637d] hover:bg-[#f7f9fc]"}`}
+                                    className={`flex min-h-11 w-full items-center gap-3 rounded-lg border-0 px-3 py-2 text-left text-[14px] ${filter === status ? "bg-[var(--blue-soft,#edf3ff)] text-[var(--blue-text,#3567bc)]" : "bg-transparent text-[var(--text-secondary,#52637d)] hover:bg-[var(--page,#f7f9fc)]"}`}
                                 >
                                     <span
                                         aria-hidden="true"

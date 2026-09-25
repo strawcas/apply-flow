@@ -23,15 +23,15 @@ export default async function ConfirmEmailPage({ searchParams }: { searchParams:
                 </p>
             </header>
             {notice === "send-failed" && (
-                <p role="alert" className="text-[#1e40af] bg-[#eff6ff] rounded-[6px] text-[16px] leading-[1.6] p-3">
+                <p role="alert" className="text-[var(--blue-text,#1e40af)] bg-[var(--blue-soft,#eff6ff)] rounded-[6px] text-[16px] leading-[1.6] p-3">
                     Your details are saved, but we couldn’t send your email. Please try again below.
                 </p>
             )}
-            <p className="text-[#1e40af] bg-[#eff6ff] rounded-[6px] text-[16px] leading-[1.6] p-3">
+            <p className="text-[var(--blue-text,#1e40af)] bg-[var(--blue-soft,#eff6ff)] rounded-[6px] text-[16px] leading-[1.6] p-3">
                 Check your spam folder too. Links expire in 24 hours, and you can request a new one once a minute.
             </p>
             <ResendForm />
-            <p className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent)] [&_a]:font-semibold [&_a]:ml-[3px]">
+            <p className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent-foreground,var(--accent))] [&_a]:font-semibold [&_a]:ml-[3px]">
                 <Link href="/dashboard">I’ve confirmed my email — continue</Link>
             </p>
         </AuthShell>

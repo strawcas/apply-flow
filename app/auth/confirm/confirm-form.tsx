@@ -16,12 +16,12 @@ export function ConfirmForm({ token }: { token: string }) {
                 </header>
                 <input type="hidden" name="token" value={token} />
                 {!token && (
-                    <p role="alert" className="text-[#1e40af] bg-[#eff6ff] rounded-[6px] text-[16px] leading-[1.6] p-3">
+                    <p role="alert" className="text-[var(--blue-text,#1e40af)] bg-[var(--blue-soft,#eff6ff)] rounded-[6px] text-[16px] leading-[1.6] p-3">
                         This confirmation link is invalid. Sign in to request a new email.
                     </p>
                 )}
                 {state.message && (
-                    <p role="alert" className="text-[#1e40af] bg-[#eff6ff] rounded-[6px] text-[16px] leading-[1.6] p-3">
+                    <p role="alert" className="text-[var(--blue-text,#1e40af)] bg-[var(--blue-soft,#eff6ff)] rounded-[6px] text-[16px] leading-[1.6] p-3">
                         {state.message}
                     </p>
                 )}
@@ -29,7 +29,7 @@ export function ConfirmForm({ token }: { token: string }) {
                     {pending ? "Confirming…" : "Confirm email address"}
                 </AuthButton>
             </form>
-            <p className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent)] [&_a]:font-semibold [&_a]:ml-[3px]">
+            <p className="[&_a:hover]:underline text-center text-[16px] text-[var(--muted)] mt-[27px] mb-0 mx-0 [&_a]:text-[var(--accent-foreground,var(--accent))] [&_a]:font-semibold [&_a]:ml-[3px]">
                 <Link href="/login">Back to sign in</Link>
             </p>
         </>

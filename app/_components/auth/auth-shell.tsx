@@ -6,11 +6,11 @@ import { AuthLogo } from "./auth-logo";
 export function AuthShell({ children }: { children: ReactNode }) {
     return (
         <main
-            className="[--ink:#172b4d] [--muted:#64748b] [--accent:#2563eb] absolute inset-0 min-h-svh grid grid-cols-[1fr_1fr] bg-[#f8faff] text-[var(--ink)] [font-family:var(--font-geist-sans),_Arial,_sans-serif] antialiased box-border max-[700px]:grid-cols-[1fr] max-[700px]:grid-rows-[auto_1fr]"
+            className="[--ink:var(--text-primary,#172b4d)] [--muted:var(--text-muted,#64748b)] [--accent:#2563eb] absolute inset-0 min-h-svh grid grid-cols-[1fr_1fr] bg-[var(--page,#f8faff)] text-[var(--ink)] [font-family:var(--font-geist-sans),_Arial,_sans-serif] antialiased box-border max-[700px]:grid-cols-[1fr] max-[700px]:grid-rows-[auto_1fr]"
             data-ui="auth"
         >
             <aside
-                className="bg-[#173b78] text-[#f8faff] flex flex-col py-12 px-[11%] [&_h2]:text-[clamp(32px,_3.6vw,_54px)] [&_h2]:leading-[1.16] [&_h2]:font-medium [&_h2]:tracking-[-2px] [&_h2]:m-0 [&_h2_span]:text-[#bfdbfe] min-[1500px]:px-[15%] max-[1050px]:py-9 max-[1050px]:px-[8%] max-[700px]:py-[25px] max-[700px]:px-7"
+                className="bg-[var(--brand-panel,#173b78)] text-[#f8faff] flex flex-col py-12 px-[11%] [&_h2]:text-[clamp(32px,_3.6vw,_54px)] [&_h2]:leading-[1.16] [&_h2]:font-medium [&_h2]:tracking-[-2px] [&_h2]:m-0 [&_h2_span]:text-[#bfdbfe] min-[1500px]:px-[15%] max-[1050px]:py-9 max-[1050px]:px-[8%] max-[700px]:py-[25px] max-[700px]:px-7"
                 aria-label="About ApplyFlow"
             >
                 <Link
@@ -41,7 +41,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
                             <span>•••</span>
                         </div>
                         <div className="flex items-center gap-3 mt-6 [&_strong]:block [&_strong]:text-[13px] [&_strong]:font-medium [&_div_>_span]:block [&_div_>_span]:mt-[5px] [&_div_>_span]:text-[10px] [&_div_>_span]:text-[#bdcfee]">
-                            <span className="grid place-items-center bg-[#dbeafe] text-[#1e40af] w-10 h-10 rounded-[10px] text-[27px]">
+                            <span className="grid place-items-center bg-[var(--blue-soft,#dbeafe)] text-[var(--blue-text,#1e40af)] w-10 h-10 rounded-[10px] text-[27px]">
                                 ✳
                             </span>
                             <div>
@@ -70,7 +70,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
                 <p className="text-[11px] text-[#b9ccec] m-0 max-[700px]:hidden">Less juggling. More moving forward.</p>
             </aside>
             <section
-                className="pt-15 pb-8 flex flex-col bg-[#f8faff] px-[12%] max-[1050px]:px-[10%] max-[700px]:pt-5 max-[700px]:pb-6 max-[700px]:px-7"
+                className="pt-15 pb-8 flex flex-col bg-[var(--page,#f8faff)] px-[12%] max-[1050px]:px-[10%] max-[700px]:pt-5 max-[700px]:pb-6 max-[700px]:px-7"
                 aria-label="Your account"
             >
                 <div className="w-full max-w-[390px] m-auto py-15 px-0 max-[700px]:pt-[35px] max-[700px]:pb-[45px] max-[700px]:px-0">

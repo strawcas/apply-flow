@@ -117,7 +117,7 @@ function Window({ children, name, ...labelProps }: WindowProps) {
             }}
             className="fixed inset-0 m-0 flex h-dvh max-h-none w-screen max-w-none items-center justify-center border-0 bg-transparent p-4 outline-none backdrop:bg-black/50 backdrop:backdrop-blur-sm"
         >
-            <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white text-zinc-900 shadow-2xl">
+            <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-[var(--border,var(--color-zinc-200))] bg-[var(--surface,#fff)] text-[var(--text-primary,var(--color-zinc-900))] shadow-2xl">
                 {children}
             </div>
         </dialog>

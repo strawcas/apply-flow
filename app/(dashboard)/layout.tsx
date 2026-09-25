@@ -7,12 +7,12 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
     return (
         <div
-            className="[--ink:#1c2d49] [--muted:#77849a] [--line:#e8edf4] [--accent:#2563eb] min-h-svh flex bg-[#f7f9fc] text-[var(--ink)] [font-family:var(--font-geist-sans),_Arial,_sans-serif] text-[13px] antialiased box-border -m-2 max-[600px]:flex-col"
+            className="[--ink:var(--text-primary,#1c2d49)] [--muted:var(--text-muted,#77849a)] [--line:var(--border,#e8edf4)] [--accent:#2563eb] min-h-svh flex bg-[var(--page,#f7f9fc)] text-[var(--ink)] [font-family:var(--font-geist-sans),_Arial,_sans-serif] text-[13px] antialiased box-border -m-2 max-[600px]:flex-col"
             data-ui="dashboard"
         >
             <a
                 href="#main-content"
-                className="absolute w-[1px] h-[1px] overflow-hidden [clip-path:inset(50%)] whitespace-nowrap focus:z-20 focus:top-[10px] focus:left-[10px] focus:w-auto focus:h-auto focus:[clip-path:none] focus:bg-white focus:text-[var(--accent)] focus:p-[15px]"
+                className="absolute w-[1px] h-[1px] overflow-hidden [clip-path:inset(50%)] whitespace-nowrap focus:z-20 focus:top-[10px] focus:left-[10px] focus:w-auto focus:h-auto focus:[clip-path:none] focus:bg-[var(--surface,#fff)] focus:text-[var(--accent-foreground,var(--accent))] focus:p-[15px]"
             >
                 Skip to content
             </a>

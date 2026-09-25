@@ -33,21 +33,21 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
     }
 
     const inputStyles =
-        "w-full rounded-xl border border-zinc-300 bg-white px-3.5 py-2.5 text-sm text-zinc-900 [&:is(input,select)]:[font:inherit] outline-none transition placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10";
+        "w-full rounded-xl border border-[var(--border-strong,var(--color-zinc-300))] bg-[var(--surface,#fff)] px-3.5 py-2.5 text-sm text-[var(--text-primary,var(--color-zinc-900))] [&:is(input,select)]:[font:inherit] outline-none transition placeholder:text-[var(--text-muted,var(--color-zinc-400))] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10";
 
     return (
         <>
-            <header className="flex shrink-0 items-start justify-between border-b border-zinc-200 px-6 py-5">
+            <header className="flex shrink-0 items-start justify-between border-b border-[var(--border,var(--color-zinc-200))] px-6 py-5">
                 <div>
-                    <p className="mb-1 text-xs font-semibold tracking-widest text-zinc-500">
+                    <p className="mb-1 text-xs font-semibold tracking-widest text-[var(--text-muted,var(--color-zinc-500))]">
                         {isEdit ? "EDIT OPPORTUNITY" : "NEW OPPORTUNITY"}
                     </p>
 
-                    <h2 className="text-xl font-semibold text-zinc-900">
+                    <h2 className="text-xl font-semibold text-[var(--text-primary,var(--color-zinc-900))]">
                         {isEdit ? "Edit application" : "Add application"}
                     </h2>
 
-                    <p className="mt-1 text-sm text-zinc-500">
+                    <p className="mt-1 text-sm text-[var(--text-muted,var(--color-zinc-500))]">
                         {isEdit ? "Update this job application." : "Add a job opportunity to your application tracker."}
                     </p>
                 </div>
@@ -56,7 +56,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     <button
                         type="button"
                         aria-label="Close modal"
-                        className="[font:inherit] flex size-9 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-transparent text-xl text-zinc-500 outline-none transition hover:bg-zinc-100 hover:text-zinc-900"
+                        className="[font:inherit] flex size-9 cursor-pointer appearance-none items-center justify-center rounded-lg border-0 bg-transparent text-xl text-[var(--text-muted,var(--color-zinc-500))] outline-none transition hover:bg-[var(--surface-hover,var(--color-zinc-100))] hover:text-[var(--text-primary,var(--color-zinc-900))]"
                     >
                         ×
                     </button>
@@ -67,7 +67,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                 <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Company</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Company</span>
 
                             <input
                                 name="companyName"
@@ -80,7 +80,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Job title</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Job title</span>
 
                             <input
                                 name="jobTitle"
@@ -94,7 +94,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </div>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-zinc-700">Job posting URL</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Job posting URL</span>
 
                         <input
                             name="jobUrl"
@@ -107,7 +107,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
 
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Source</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Source</span>
 
                             <input
                                 name="source"
@@ -119,7 +119,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Location</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Location</span>
 
                             <input
                                 name="location"
@@ -134,7 +134,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
 
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Work arrangement</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Work arrangement</span>
 
                             <select
                                 name="workMode"
@@ -149,7 +149,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Employment type</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Employment type</span>
 
                             <select
                                 name="employmentType"
@@ -167,7 +167,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
 
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Status</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Status</span>
 
                             <select
                                 name="status"
@@ -184,7 +184,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-zinc-700">Date applied</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Date applied</span>
 
                             <input
                                 name="dateApplied"
@@ -196,11 +196,11 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </div>
 
                     <div>
-                        <span className="text-sm font-medium text-zinc-700">Salary</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Salary</span>
 
                         <div className="mt-2 grid gap-5 sm:grid-cols-3">
                             <label className="flex flex-col gap-2">
-                                <span className="text-xs text-zinc-500">Minimum</span>
+                                <span className="text-xs text-[var(--text-muted,var(--color-zinc-500))]">Minimum</span>
 
                                 <input
                                     name="salaryMin"
@@ -214,7 +214,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                             </label>
 
                             <label className="flex flex-col gap-2">
-                                <span className="text-xs text-zinc-500">Maximum</span>
+                                <span className="text-xs text-[var(--text-muted,var(--color-zinc-500))]">Maximum</span>
 
                                 <input
                                     name="salaryMax"
@@ -228,7 +228,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                             </label>
 
                             <label className="flex flex-col gap-2">
-                                <span className="text-xs text-zinc-500">Currency</span>
+                                <span className="text-xs text-[var(--text-muted,var(--color-zinc-500))]">Currency</span>
 
                                 <select
                                     name="currency"
@@ -250,7 +250,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </div>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-zinc-700">Application deadline</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Application deadline</span>
 
                         <input
                             name="deadline"
@@ -261,7 +261,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </label>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-zinc-700">Notes</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Notes</span>
 
                         <textarea
                             name="notes"
@@ -273,11 +273,11 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </label>
                 </div>
 
-                <footer className="flex shrink-0 flex-wrap justify-end gap-3 border-t border-zinc-200 bg-white px-6 py-4">
+                <footer className="flex shrink-0 flex-wrap justify-end gap-3 border-t border-[var(--border,var(--color-zinc-200))] bg-[var(--surface,#fff)] px-6 py-4">
                     {isEdit && (
                         <button
                             type="button"
-                            className="[font:inherit] mr-auto cursor-pointer appearance-none rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-medium text-red-600 outline-none transition hover:bg-red-50 focus-visible:ring-2 focus-visible:ring-red-500/30 max-sm:w-full"
+                            className="[font:inherit] mr-auto cursor-pointer appearance-none rounded-xl border border-[var(--red-soft,var(--color-red-200))] bg-[var(--surface,#fff)] px-4 py-2.5 text-sm font-medium text-[var(--red-text,var(--color-red-600))] outline-none transition hover:bg-[var(--red-soft,var(--color-red-50))] focus-visible:ring-2 focus-visible:ring-red-500/30 max-sm:w-full"
                         >
                             Delete
                         </button>
@@ -286,7 +286,7 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     <Modal.Close>
                         <button
                             type="button"
-                            className="[font:inherit] cursor-pointer appearance-none rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 outline-none transition hover:bg-zinc-50"
+                            className="[font:inherit] cursor-pointer appearance-none rounded-xl border border-[var(--border-strong,var(--color-zinc-300))] bg-[var(--surface,#fff)] px-4 py-2.5 text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))] outline-none transition hover:bg-[var(--surface-hover,var(--color-zinc-50))]"
                         >
                             Cancel
                         </button>
