@@ -2,20 +2,44 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { AuthLogo } from "@/app/_components/auth/auth-logo";
 import Icon, { type IconName } from "./dashboard-icon";
 import { signOut } from "@/app/_actions/authActions";
 import ThemeToggle from "@/app/_components/theme-toggle";
+import { LoadingSpinner } from "@/app/_components/loading-spinner";
 
-const navigation: { href: string; label: string; icon: IconName }[] = [
+type NavigationItem = { href: string; label: string; icon: IconName };
+
+const navigation: NavigationItem[] = [
     { href: "/dashboard", label: "Dashboard", icon: "overview" },
     { href: "/applications", label: "Applications", icon: "applications" },
     { href: "/calendar", label: "Calendar", icon: "calendar" },
     { href: "/profile", label: "Profile", icon: "profile" },
     { href: "/settings", label: "Settings", icon: "settings" },
 ];
+
+function NavigationLinkContent({ item, active }: { item: NavigationItem; active: boolean }) {
+    const { pending } = useLinkStatus();
+
+    return (
+        <span
+            aria-busy={pending}
+            className={`flex items-center gap-[13px] rounded-[7px] font-medium py-[14px] px-[15px] ${active || pending ? "text-[var(--accent-foreground,var(--accent))] bg-[var(--blue-soft,#edf3ff)]" : "text-[var(--text-muted,#708098)] hover:bg-[var(--surface-hover,#f5f8fe)] hover:text-[var(--accent-foreground,var(--accent))]"}`}
+        >
+            <Icon name={item.icon} />
+            {item.label}
+            <span className="ml-auto flex size-4 shrink-0 items-center justify-center">
+                {pending ? (
+                    <LoadingSpinner size="s" label={`Opening ${item.label}…`} />
+                ) : active ? (
+                    <span className="size-[6px] rounded-full bg-[var(--accent)]" />
+                ) : null}
+            </span>
+        </span>
+    );
+}
 
 function SignOutButton() {
     const { pending } = useFormStatus();
@@ -77,14 +101,10 @@ export default function Sidebar() {
                                 <Link
                                     href={item.href}
                                     aria-current={active ? "page" : undefined}
-                                    className={`flex items-center gap-[13px] rounded-[7px] font-medium py-[14px] px-[15px] ${active ? "text-[var(--accent-foreground,var(--accent))] bg-[var(--blue-soft,#edf3ff)]" : "text-[var(--text-muted,#708098)] hover:bg-[var(--surface-hover,#f5f8fe)] hover:text-[var(--accent-foreground,var(--accent))]"}`}
-                                    onClick={() => setOpen(false)}
+                                    className="block rounded-[7px]"
+                                    onNavigate={() => setOpen(false)}
                                 >
-                                    <Icon name={item.icon} />
-                                    {item.label}
-                                    {active && (
-                                        <span className="ml-auto w-[6px] h-[6px] rounded-full bg-[var(--accent)]" />
-                                    )}
+                                    <NavigationLinkContent item={item} active={active} />
                                 </Link>
                             </li>
                         );
