@@ -100,6 +100,7 @@ export default function Sidebar() {
                             <li key={item.href}>
                                 <Link
                                     href={item.href}
+                                    prefetch={true}
                                     aria-current={active ? "page" : undefined}
                                     className="block rounded-[7px]"
                                     onNavigate={() => setOpen(false)}
