@@ -90,6 +90,7 @@ function Window({ children, name, ...labelProps }: WindowProps) {
         const previousFocus = document.activeElement;
         const previousOverflow = document.body.style.overflow;
         dialog.showModal();
+        dialog.querySelector<HTMLElement>("[autofocus], [data-autofocus]")?.focus();
         document.body.style.overflow = "hidden";
 
         return () => {

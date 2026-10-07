@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Modal, { useModal } from "@/app/_components/Modal";
 import { addApplication } from "@/app/_actions/applicationActions";
 import type { applications } from "@/drizzle/schema";
+import { currencies, workModes } from "@/app/_lib/settings";
+import { useSettings } from "./settings-provider";
+import { applicationStatuses } from "@/app/_lib/application-status";
 
 type ApplicationFormValues = Omit<typeof applications.$inferSelect, "id" | "createdAt" | "userId">;
 
@@ -22,6 +26,9 @@ type ApplicationFormProps =
 
 export default function ApplicationForm({ type, initialValue, submitAction }: ApplicationFormProps) {
     const isEdit = type === "edit";
+    const settings = useSettings();
+    const [status, setStatus] = useState(initialValue?.status ?? "Applied");
+    const [dateApplied, setDateApplied] = useState(initialValue?.dateApplied ?? "");
 
     const action = type === "add" ? (submitAction ?? addApplication) : submitAction;
 
@@ -39,17 +46,9 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
         <>
             <header className="flex shrink-0 items-start justify-between border-b border-[var(--border,var(--color-zinc-200))] px-6 py-5">
                 <div>
-                    <p className="mb-1 text-xs font-semibold tracking-widest text-[var(--text-muted,var(--color-zinc-500))]">
-                        {isEdit ? "EDIT OPPORTUNITY" : "NEW OPPORTUNITY"}
-                    </p>
-
-                    <h2 className="text-xl font-semibold text-[var(--text-primary,var(--color-zinc-900))]">
+                    <h2 className="m-0 text-xl font-semibold text-[var(--text-primary,var(--color-zinc-900))]">
                         {isEdit ? "Edit application" : "Add application"}
                     </h2>
-
-                    <p className="mt-1 text-sm text-[var(--text-muted,var(--color-zinc-500))]">
-                        {isEdit ? "Update this job application." : "Add a job opportunity to your application tracker."}
-                    </p>
                 </div>
 
                 <Modal.Close>
@@ -67,7 +66,9 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                 <div className="flex-1 space-y-5 overflow-y-auto px-6 py-6">
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Company</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Company
+                            </span>
 
                             <input
                                 name="companyName"
@@ -80,7 +81,9 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Job title</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Job title
+                            </span>
 
                             <input
                                 name="jobTitle"
@@ -94,7 +97,9 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </div>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Job posting URL</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                            Job posting URL
+                        </span>
 
                         <input
                             name="jobUrl"
@@ -107,7 +112,9 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
 
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Source</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Source
+                            </span>
 
                             <input
                                 name="source"
@@ -119,7 +126,9 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Location</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Location
+                            </span>
 
                             <input
                                 name="location"
@@ -134,22 +143,28 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
 
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Work arrangement</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Work arrangement
+                            </span>
 
                             <select
                                 name="workMode"
-                                defaultValue={initialValue?.workMode ?? "Remote"}
+                                defaultValue={isEdit ? initialValue.workMode : settings.workMode}
                                 required
                                 className={inputStyles}
                             >
-                                <option value="Remote">Remote</option>
-                                <option value="Hybrid">Hybrid</option>
-                                <option value="On-site">On-site</option>
+                                {workModes.map((mode) => (
+                                    <option key={mode} value={mode}>
+                                        {mode}
+                                    </option>
+                                ))}
                             </select>
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Employment type</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Employment type
+                            </span>
 
                             <select
                                 name="employmentType"
@@ -167,36 +182,45 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
 
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Status</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Status
+                            </span>
 
                             <select
                                 name="status"
-                                defaultValue={initialValue?.status ?? "Applied"}
+                                value={status}
+                                onChange={(event) => setStatus(event.target.value)}
                                 required
                                 className={inputStyles}
                             >
-                                <option value="Applied">Applied</option>
-                                <option value="In review">In review</option>
-                                <option value="Interview">Interview</option>
-                                <option value="Offer">Offer</option>
-                                <option value="Rejected">Rejected</option>
+                                {applicationStatuses.map((status) => (
+                                    <option key={status} value={status}>
+                                        {status}
+                                    </option>
+                                ))}
                             </select>
                         </label>
 
                         <label className="flex flex-col gap-2">
-                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Date applied</span>
+                            <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                Date applied
+                            </span>
 
                             <input
                                 name="dateApplied"
                                 type="date"
-                                defaultValue={initialValue?.dateApplied ?? ""}
+                                value={status === "Saved" ? "" : dateApplied}
+                                onChange={(event) => setDateApplied(event.target.value)}
+                                disabled={status === "Saved"}
                                 className={inputStyles}
                             />
                         </label>
                     </div>
 
                     <div>
-                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Salary</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                            Salary
+                        </span>
 
                         <div className="mt-2 grid gap-5 sm:grid-cols-3">
                             <label className="flex flex-col gap-2">
@@ -232,25 +256,24 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
 
                                 <select
                                     name="currency"
-                                    defaultValue={initialValue?.currency ?? ""}
+                                    defaultValue={isEdit ? (initialValue.currency ?? "") : settings.currency}
                                     className={inputStyles}
                                 >
                                     <option value="">Select</option>
-                                    <option value="PHP">PHP</option>
-                                    <option value="USD">USD</option>
-                                    <option value="EUR">EUR</option>
-                                    <option value="GBP">GBP</option>
-                                    <option value="AUD">AUD</option>
-                                    <option value="CAD">CAD</option>
-                                    <option value="SGD">SGD</option>
-                                    <option value="JPY">JPY</option>
+                                    {currencies.map((currency) => (
+                                        <option key={currency} value={currency}>
+                                            {currency}
+                                        </option>
+                                    ))}
                                 </select>
                             </label>
                         </div>
                     </div>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Application deadline</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                            Application deadline
+                        </span>
 
                         <input
                             name="deadline"
@@ -261,7 +284,9 @@ export default function ApplicationForm({ type, initialValue, submitAction }: Ap
                     </label>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">Notes</span>
+                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                            Notes
+                        </span>
 
                         <textarea
                             name="notes"

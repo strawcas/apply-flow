@@ -36,7 +36,13 @@ export async function GET(request: NextRequest) {
             return go("/login?notice=signup-first");
         }
         return go(destination);
-    } catch {
+    } catch (error) {
+        const cause = error instanceof Error && error.cause ? error.cause : error;
+        const code = cause && typeof cause === "object" && "code" in cause && typeof cause.code === "string"
+            ? cause.code
+            : cause instanceof Error && /timeout|timed out/i.test(cause.message) ? "CONNECTION_TIMEOUT" : "UNKNOWN";
+        // Drizzle errors include SQL and user data; log only the diagnostic code.
+        console.error("OAuth account lookup failed:", { code });
         await supabase.auth.signOut({ scope: "local" });
         return go("/login?notice=unavailable");
     }

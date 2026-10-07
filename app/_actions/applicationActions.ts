@@ -12,6 +12,7 @@ export async function addApplication(formData: FormData) {
     await createApplication({ ...getApplicationValues(formData), userId: user.user_id });
     revalidatePath("/applications");
     revalidatePath("/dashboard");
+    revalidatePath("/calendar");
 }
 
 export async function updateApplicationAction(applicationId: number, formData: FormData) {
@@ -26,13 +27,15 @@ export async function updateApplicationAction(applicationId: number, formData: F
 
     revalidatePath("/applications");
     revalidatePath("/dashboard");
+    revalidatePath("/calendar");
 }
 
 function getApplicationValues(formData: FormData) {
+    const status = getString(formData, "status");
     return {
         companyName: getString(formData, "companyName"),
         jobTitle: getString(formData, "jobTitle"),
-        status: getString(formData, "status"),
+        status,
 
         jobUrl: getOptionalString(formData, "jobUrl"),
         source: getOptionalString(formData, "source"),
@@ -45,7 +48,7 @@ function getApplicationValues(formData: FormData) {
         salaryMax: getOptionalString(formData, "salaryMax"),
         currency: getOptionalString(formData, "currency"),
 
-        dateApplied: getOptionalString(formData, "dateApplied"),
+        dateApplied: status === "Saved" ? null : getOptionalString(formData, "dateApplied"),
         deadline: getOptionalString(formData, "deadline"),
         notes: getOptionalString(formData, "notes"),
     };
@@ -55,6 +58,7 @@ export async function deleteApplicationAction(applicationId: number) {
     await deleteApplicationById(applicationId);
     revalidatePath("/applications");
     revalidatePath("/dashboard");
+    revalidatePath("/calendar");
 }
 
 function getString(formData: FormData, name: string) {

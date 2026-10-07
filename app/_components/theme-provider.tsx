@@ -1,12 +1,12 @@
 "use client";
 
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { themeStorageKey, type Theme } from "@/app/_lib/theme";
+import { themeStorageKey, type Theme, type ThemePreference } from "@/app/_lib/theme";
 
-function readPreference(fallback: Theme | null = null): Theme | null {
+function readPreference(fallback: ThemePreference = "system"): ThemePreference {
     try {
         const saved = localStorage.getItem(themeStorageKey);
-        return saved === "light" || saved === "dark" ? saved : null;
+        return saved === "light" || saved === "dark" ? saved : "system";
     } catch {
         return fallback;
     }
@@ -16,20 +16,27 @@ function applyTheme(theme: Theme) {
     document.documentElement.classList.toggle("dark", theme === "dark");
 }
 
-const ThemeContext = createContext<{ theme: Theme; setTheme: (theme: Theme) => void } | null>(null);
+const ThemeContext = createContext<{
+    theme: Theme;
+    preference: ThemePreference;
+    setTheme: (theme: ThemePreference) => void;
+} | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setCurrentTheme] = useState<Theme>("light");
-    const preference = useRef<Theme | null>(null);
+    const preference = useRef<ThemePreference>("system");
+    const [currentPreference, setCurrentPreference] = useState<ThemePreference>("system");
 
     useEffect(() => {
         const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
         preference.current = readPreference(preference.current);
 
         const syncTheme = () => {
-            const next = preference.current ?? (systemTheme.matches ? "dark" : "light");
+            const next =
+                preference.current === "system" ? (systemTheme.matches ? "dark" : "light") : preference.current;
             applyTheme(next);
             setCurrentTheme(next);
+            setCurrentPreference(preference.current);
         };
         const syncStorage = (event: StorageEvent) => {
             if (event.key === themeStorageKey || event.key === null) {
@@ -49,18 +56,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         };
     }, []);
 
-    function setTheme(next: Theme) {
+    function setTheme(next: ThemePreference) {
         preference.current = next;
         try {
             localStorage.setItem(themeStorageKey, next);
         } catch {
             // The switch still works when browser storage is unavailable.
         }
-        applyTheme(next);
-        setCurrentTheme(next);
+        const resolved =
+            next === "system" ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : next;
+        applyTheme(resolved);
+        setCurrentTheme(resolved);
+        setCurrentPreference(next);
     }
 
-    return <ThemeContext value={{ theme, setTheme }}>{children}</ThemeContext>;
+    return <ThemeContext value={{ theme, preference: currentPreference, setTheme }}>{children}</ThemeContext>;
 }
 
 export function useTheme() {

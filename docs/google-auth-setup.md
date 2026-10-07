@@ -46,7 +46,7 @@ Run the app migrations:
 node scripts/auth-database.mjs --apply
 ```
 
-The script creates the initial profile table on a new installation, then renames it to `public.users`. On an existing installation, it preserves the table's rows, RLS, grants, and foreign keys. Rerunning the script does not recreate `applyflow_profiles`.
+The script uses Drizzle's PostgreSQL driver to run the SQL migrations in a transaction; `pg` remains the underlying connection driver. It creates the initial profile table on a new installation, then renames it to `public.users`. On an existing installation, it preserves the table's rows, RLS, grants, and foreign keys. Rerunning the script does not recreate `applyflow_profiles`.
 
 Alternatively, use the Supabase SQL Editor. For a new installation, first run `supabase/migrations/202609220001_applyflow_profiles.sql`. Then run `supabase/migrations/202609230001_rename_profiles_to_users.sql`. If `applyflow_profiles` already exists, run only the rename migration; if the rename is already applied, do not rerun the initial migration. The rename refuses to overwrite an existing `public.users` table. Browser roles have no access; Next.js accesses `public.users` using the server's `DATABASE_URL`. Supabase's separate `auth.users` table is unchanged.
 

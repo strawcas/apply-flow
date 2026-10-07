@@ -17,13 +17,9 @@ export default function ProfileOverview({ profile }: { profile: ProfileDetails }
     return (
         <div className="w-full min-w-0 pb-4 text-[15px] leading-[1.5]">
             <header className="mb-8">
-                <p className="mb-3 mt-0 text-[12px] font-semibold tracking-[1.6px] text-[var(--text-secondary,#52637d)]">MAKE IT YOURS</p>
                 <h1 className="m-0 text-[34px] font-semibold leading-[1.25] tracking-[-1px] max-[600px]:text-[28px]">
-                    Your profile
+                    Profile
                 </h1>
-                <p className="mb-0 mt-3 text-[16px] leading-6 text-[var(--text-secondary,#52637d)]">
-                    Your next chapter starts with you. Keep your details up to date.
-                </p>
             </header>
 
             <section
@@ -49,7 +45,9 @@ export default function ProfileOverview({ profile }: { profile: ProfileDetails }
                         >
                             {profile.full_name}
                         </h2>
-                        <p className="mb-0 mt-2 text-[14px] text-[var(--text-muted,#64748b)] [overflow-wrap:anywhere]">{profile.email}</p>
+                        <p className="mb-0 mt-2 text-[14px] text-[var(--text-muted,#64748b)] [overflow-wrap:anywhere]">
+                            {profile.email}
+                        </p>
                     </div>
                     <span
                         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] font-medium [&_svg]:h-4 [&_svg]:w-4 ${confirmed ? "bg-[var(--green-soft,#edf8f1)] text-[var(--green-text,#21734d)]" : "bg-[var(--amber-soft,#fff7e6)] text-[var(--amber-text,#946200)]"}`}
@@ -71,12 +69,9 @@ export default function ProfileOverview({ profile }: { profile: ProfileDetails }
                         className="rounded-xl border border-solid border-[var(--line)] bg-[var(--surface,#fff)] p-7 max-[600px]:p-5"
                         aria-labelledby="connected-account"
                     >
-                        <h2 id="connected-account" className="m-0 text-[18px] font-semibold tracking-[-0.3px]">
+                        <h2 id="connected-account" className="mt-0 mb-5 text-[18px] font-semibold tracking-[-0.3px]">
                             Connected account
                         </h2>
-                        <p className="mb-6 mt-2 text-[14px] leading-6 text-[var(--text-muted,#64748b)]">
-                            How you sign in to your workspace.
-                        </p>
                         <div className="flex items-center gap-4 rounded-lg border border-solid border-[var(--line)] p-4 max-[600px]:flex-wrap">
                             <span
                                 className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-solid border-[var(--line)] bg-[var(--surface,#fff)]"
@@ -126,32 +121,25 @@ export default function ProfileOverview({ profile }: { profile: ProfileDetails }
                         <span className="mb-4 grid h-10 w-10 place-items-center rounded-lg bg-[var(--blue-soft,#edf3ff)] text-[var(--blue-text,#2563eb)]">
                             <Icon name="profile" />
                         </span>
-                        <h2 className="m-0 text-[16px] font-semibold">A space for your journey</h2>
+                        <h2 className="m-0 text-[16px] font-semibold">Profile details</h2>
                         <p className="mb-0 mt-3 text-[14px] leading-6 text-[var(--text-muted,#64748b)]">
-                            These details belong to your ApplyFlow account. Editing your profile won’t change your
-                            Google account or your applications.
+                            Profile changes only affect your ApplyFlow account.
                         </p>
                     </section>
                     <section className="rounded-xl bg-[var(--brand-panel,#193e79)] p-6 text-white">
                         <span className="mb-4 grid h-10 w-10 place-items-center rounded-lg bg-[#ffffff12] text-[#c5d9ff]">
                             <Icon name="applications" />
                         </span>
-                        <h2 className="m-0 text-[20px] font-medium leading-7 tracking-[-0.4px]">
-                            Ready for your next step?
-                        </h2>
-                        <p className="mb-5 mt-3 text-[14px] leading-6 text-[#ccdaf0]">
-                            Keep your opportunities in one place and your next chapter in sight.
-                        </p>
+                        <h2 className="m-0 text-[20px] font-medium leading-7 tracking-[-0.4px]">Applications</h2>
                         <Link
                             href="/applications"
-                            className="inline-flex min-h-11 items-center gap-2 text-[14px] font-medium text-white hover:underline"
+                            className="mt-4 inline-flex min-h-11 items-center gap-2 text-[14px] font-medium text-white hover:underline"
                         >
                             View applications <Icon name="arrow" />
                         </Link>
                     </section>
                 </aside>
             </div>
-            <p className="mb-0 mt-6 text-[12px] text-[var(--text-muted,#64748b)]">ApplyFlow · Your job search, organized.</p>
         </div>
     );
 }

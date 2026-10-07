@@ -5,21 +5,25 @@ import Link from "next/link";
 import type { applications as applicationsTable } from "@/drizzle/schema";
 import Icon, { type IconName } from "./dashboard-icon";
 import { applicationColors } from "./application-colors";
+import { applicationStatuses } from "@/app/_lib/application-status";
 
 type Application = Pick<
     typeof applicationsTable.$inferSelect,
     "id" | "companyName" | "jobTitle" | "location" | "workMode" | "status" | "dateApplied"
 >;
 
-const statuses = ["Applied", "In review", "Interview", "Offer", "Rejected"];
 const statusStyles: Record<string, { badge: string; bar: string }> = {
+    Saved: { badge: "text-[var(--text-secondary,#52637d)] bg-[var(--surface-subtle,#f0f3f7)]", bar: "bg-[#94a3b8]" },
     Applied: { badge: "text-[var(--blue-text,#396ab6)] bg-[var(--blue-soft,#edf3ff)]", bar: "bg-[#5c8ee6]" },
     "In review": { badge: "text-[var(--amber-text,#8b691e)] bg-[var(--amber-soft,#fff6e6)]", bar: "bg-[#d5aa51]" },
     Interview: { badge: "text-[var(--purple-text,#7957b0)] bg-[var(--purple-soft,#f2edfc)]", bar: "bg-[#9a7bcf]" },
     Offer: { badge: "text-[var(--green-text,#347b52)] bg-[var(--green-soft,#edf8f0)]", bar: "bg-[#61a980]" },
     Rejected: { badge: "text-[var(--red-text,#ab575b)] bg-[var(--red-soft,#fdf0f1)]", bar: "bg-[#ce858b]" },
 };
-const fallbackStyle = { badge: "text-[var(--text-secondary,#52637d)] bg-[var(--surface-subtle,#f0f3f7)]", bar: "bg-[#94a3b8]" };
+const fallbackStyle = {
+    badge: "text-[var(--text-secondary,#52637d)] bg-[var(--surface-subtle,#f0f3f7)]",
+    bar: "bg-[#94a3b8]",
+};
 const companyColors = ["blue", "purple", "coral", "green", "ink", "amber"];
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -35,7 +39,9 @@ function getStatusStyle(status: string) {
 export default function DashboardOverview({ applications }: { applications: Application[] }) {
     const [query, setQuery] = useState("");
     const [filter, setFilter] = useState("");
-    const allStatuses = [...new Set([...statuses, ...applications.map((application) => application.status)])];
+    const allStatuses = [
+        ...new Set([...applicationStatuses, ...applications.map((application) => application.status)]),
+    ];
     const statusCounts = new Map<string, number>();
     for (const application of applications) {
         statusCounts.set(application.status, (statusCounts.get(application.status) ?? 0) + 1);
@@ -48,7 +54,12 @@ export default function DashboardOverview({ applications }: { applications: Appl
     );
     const visible = filtered.slice(0, 6);
     const metrics: { label: string; value: number; icon: IconName; color: string }[] = [
-        { label: "Total applications", value: applications.length, icon: "applications", color: "blue" },
+        {
+            label: "Total applications",
+            value: applications.filter((application) => application.status !== "Saved").length,
+            icon: "applications",
+            color: "blue",
+        },
         { label: "In review", value: statusCounts.get("In review") ?? 0, icon: "activity", color: "amber" },
         { label: "Interviews", value: statusCounts.get("Interview") ?? 0, icon: "calendar", color: "purple" },
         { label: "Offers", value: statusCounts.get("Offer") ?? 0, icon: "check", color: "green" },
@@ -68,7 +79,9 @@ export default function DashboardOverview({ applications }: { applications: Appl
                         className="rounded-xl border border-solid border-[var(--line)] bg-[var(--surface,#fff)] p-6 max-[600px]:p-4"
                     >
                         <div className="flex min-h-11 items-start justify-between gap-2">
-                            <h2 className="m-0 text-[14px] font-medium text-[var(--text-secondary,#52637d)]">{metric.label}</h2>
+                            <h2 className="m-0 text-[14px] font-medium text-[var(--text-secondary,#52637d)]">
+                                {metric.label}
+                            </h2>
                             <span
                                 className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg max-[600px]:h-8 max-[600px]:w-8 ${applicationColors[metric.color]}`}
                             >
@@ -238,7 +251,10 @@ export default function DashboardOverview({ applications }: { applications: Appl
                     <h2 id="application-status-title" className="m-0 text-[18px] font-semibold tracking-[-0.3px]">
                         Application status
                     </h2>
-                    <div aria-hidden="true" className="mb-6 mt-6 flex h-2 overflow-hidden rounded-full bg-[var(--surface-subtle,#f0f3f7)]">
+                    <div
+                        aria-hidden="true"
+                        className="mb-6 mt-6 flex h-2 overflow-hidden rounded-full bg-[var(--surface-subtle,#f0f3f7)]"
+                    >
                         {allStatuses.map((status) => (
                             <span
                                 key={status}

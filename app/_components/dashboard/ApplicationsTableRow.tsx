@@ -5,10 +5,10 @@ type Application = typeof applications.$inferSelect;
 import Icon from "@/app/_components/dashboard/dashboard-icon";
 import Modal, { useModal } from "@/app/_components/Modal";
 import EditApplication from "@/app/_components/dashboard/EditApplication";
-
-type ApplicationStatus = "Applied" | "In review" | "Interview" | "Offer" | "Rejected";
+import type { ApplicationStatus } from "@/app/_lib/application-status";
 
 const statusStyles: Record<ApplicationStatus, string> = {
+    Saved: "text-[var(--text-secondary,#52637d)] bg-[var(--surface-subtle,#f0f3f7)]",
     Applied: "text-[var(--blue-text,#396ab6)] bg-[var(--blue-soft,#edf3ff)]",
     "In review": "text-[var(--amber-text,#8b691e)] bg-[var(--amber-soft,#fff6e6)]",
     Interview: "text-[var(--purple-text,#7957b0)] bg-[var(--purple-soft,#f2edfc)]",
@@ -21,7 +21,9 @@ function isApplicationStatus(value: string): value is ApplicationStatus {
 }
 
 function getStatusStyle(status: string): string {
-    return isApplicationStatus(status) ? statusStyles[status] : "text-[var(--text-secondary,var(--color-gray-600))] bg-[var(--surface-subtle,var(--color-gray-100))]";
+    return isApplicationStatus(status)
+        ? statusStyles[status]
+        : "text-[var(--text-secondary,var(--color-gray-600))] bg-[var(--surface-subtle,var(--color-gray-100))]";
 }
 
 export default function ApplicationsTableRow({ applicationData }: { applicationData: Application }) {
@@ -88,7 +90,9 @@ function ApplicationRow({ applicationData }: { applicationData: Application }) {
             <td>
                 <div className="grid gap-[6px] text-[14px] text-[var(--text-secondary,#52637d)]">
                     {applicationData.deadline && (
-                        <span className="text-[var(--text-primary,#33465f)] text-[16px]">Deadline: {applicationData.deadline}</span>
+                        <span className="text-[var(--text-primary,#33465f)] text-[16px]">
+                            Deadline: {applicationData.deadline}
+                        </span>
                     )}
                 </div>
             </td>

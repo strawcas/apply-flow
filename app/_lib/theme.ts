@@ -1,4 +1,5 @@
 export type Theme = "light" | "dark";
+export type ThemePreference = Theme | "system";
 
 export const themeStorageKey = "applyflow-theme";
 

@@ -46,9 +46,6 @@ export default function ProfileForm({ values, today }: { values: ProfileValues; 
                 <h2 id="personal-information" className="m-0 text-[18px] font-semibold tracking-[-0.3px]">
                     Personal information
                 </h2>
-                <p className="mb-0 mt-2 text-[14px] leading-6 text-[var(--text-muted,#64748b)]">
-                    A few details that make this space yours.
-                </p>
             </div>
             <form onSubmit={submit} aria-busy={pending}>
                 <fieldset disabled={pending} className="m-0 min-w-0 border-0 p-7 max-[600px]:p-5">
@@ -67,11 +64,7 @@ export default function ProfileForm({ values, today }: { values: ProfileValues; 
                                 value={draft.fullName}
                                 onChange={(event) => edit("fullName", event.target.value)}
                                 className={inputClass}
-                                aria-describedby="full-name-help"
                             />
-                            <p id="full-name-help" className="mb-0 mt-2 text-[12px] leading-5 text-[var(--text-muted,#64748b)]">
-                                The name you use on ApplyFlow.
-                            </p>
                         </div>
                         <div>
                             <label htmlFor="profile-birth-date" className="text-[14px] font-medium">
@@ -88,11 +81,7 @@ export default function ProfileForm({ values, today }: { values: ProfileValues; 
                                 value={draft.birthDate}
                                 onChange={(event) => edit("birthDate", event.target.value)}
                                 className={inputClass}
-                                aria-describedby="birth-date-help"
                             />
-                            <p id="birth-date-help" className="mb-0 mt-2 text-[12px] leading-5 text-[var(--text-muted,#64748b)]">
-                                Your date of birth, as provided at signup.
-                            </p>
                         </div>
                     </div>
                 </fieldset>

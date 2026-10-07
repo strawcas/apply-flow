@@ -1,16 +1,7 @@
 import Icon from "@/app/_components/dashboard/dashboard-icon";
 import { getAllApplicationsCurrentUser } from "@/app/_db/applications";
 import ApplicationsTableRow from "@/app/_components/dashboard/ApplicationsTableRow";
-
-type ApplicationStatus = "Applied" | "In review" | "Interview" | "Offer" | "Rejected";
-
-const statusStyles: Record<ApplicationStatus, string> = {
-    Applied: "text-[var(--blue-text,#396ab6)] bg-[var(--blue-soft,#edf3ff)]",
-    "In review": "text-[var(--amber-text,#8b691e)] bg-[var(--amber-soft,#fff6e6)]",
-    Interview: "text-[var(--purple-text,#7957b0)] bg-[var(--purple-soft,#f2edfc)]",
-    Offer: "text-[var(--green-text,#347b52)] bg-[var(--green-soft,#edf8f0)]",
-    Rejected: "text-[var(--red-text,#ab575b)] bg-[var(--red-soft,#fdf0f1)]",
-};
+import { applicationStatuses } from "@/app/_lib/application-status";
 
 export default async function ApplicationsTable() {
     const applications = await getAllApplicationsCurrentUser();
@@ -44,7 +35,7 @@ export default async function ApplicationsTable() {
                 <div className="flex gap-[10px] [&_select]:min-h-[50px] [&_select]:[border:1px_solid_var(--border,#e2e8f0)] [&_select]:rounded-[6px] [&_select]:bg-[var(--surface,#fff)] [&_select]:text-[var(--text-secondary,#42536d)] [&_select]:text-[16px] [&_select]:whitespace-nowrap [&_select]:min-w-39 [&_select]:py-0 [&_select]:px-[14px] max-[600px]:[&_>_*]:[flex:1_1_150px] max-[600px]:[&_>_*]:min-w-0 max-[600px]:flex-wrap">
                     <select aria-label="Filter by status" defaultValue="all" disabled>
                         <option value="all">All statuses</option>
-                        {Object.keys(statusStyles).map((status) => (
+                        {applicationStatuses.map((status) => (
                             <option key={status} value={status}>
                                 {status}
                             </option>

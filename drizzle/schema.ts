@@ -915,6 +915,35 @@ export const applications = pgTable.withRLS("applications", {
         .references(() => users.userId, { onDelete: "cascade" }),
 });
 
+export const calendarEvents = pgTable.withRLS(
+    "calendar_events",
+    {
+        id: uuid().defaultRandom().primaryKey(),
+        userId: uuid("user_id").notNull().references(() => users.userId, { onDelete: "cascade" }),
+        title: text().notNull(),
+        kind: text("type").notNull(),
+        date: date("event_date").notNull(),
+        time: text("start_time").default("").notNull(),
+        endTime: text("end_time").default("").notNull(),
+        company: text("company").default("").notNull(),
+        location: text().default("").notNull(),
+        notes: text().default("").notNull(),
+        createdAt: timestamp("created_at", { withTimezone: true }).default(sql`now()`).notNull(),
+    },
+    (table) => [
+        index("calendar_events_user_date_idx").on(table.userId, table.date),
+        check("calendar_events_title_check", sql`length(btrim(${table.title})) BETWEEN 1 AND 120`),
+        check("calendar_events_type_check", sql`${table.kind} IN ('interview', 'deadline', 'follow-up', 'other')`),
+        check("calendar_events_event_date_check", sql`${table.date} BETWEEN DATE '1900-01-01' AND DATE '9999-12-31'`),
+        check("calendar_events_start_time_check", sql`${table.time} = '' OR ${table.time} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'`),
+        check("calendar_events_end_time_check", sql`${table.endTime} = '' OR ${table.endTime} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'`),
+        check("calendar_events_check", sql`${table.endTime} = '' OR (${table.time} <> '' AND ${table.endTime} > ${table.time})`),
+        check("calendar_events_company_check", sql`length(${table.company}) <= 120`),
+        check("calendar_events_location_check", sql`length(${table.location}) <= 500`),
+        check("calendar_events_notes_check", sql`length(${table.notes}) <= 2000`),
+    ],
+);
+
 export const users = pgTable.withRLS(
     "users",
     {
