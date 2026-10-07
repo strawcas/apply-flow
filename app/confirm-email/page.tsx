@@ -8,7 +8,8 @@ import { ResendForm } from "./resend-form";
 export const metadata = { title: "Check your email | ApplyFlow" };
 
 export default async function ConfirmEmailPage({ searchParams }: { searchParams: Promise<{ notice?: string }> }) {
-    const { user, email } = await requireGoogleUser();
+    const { user, email, success } = await requireGoogleUser();
+    if (!user || !email || !success) redirect("/login");
     const profile = await getProfile(user.id);
     if (!profile) redirect("/signup/complete");
     if (profile.email_confirmed_at && profile.email === email) redirect("/dashboard");

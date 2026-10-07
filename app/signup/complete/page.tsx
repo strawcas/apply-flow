@@ -8,7 +8,8 @@ import { ProfileForm } from "./profile-form";
 export const metadata = { title: "Finish signing up | ApplyFlow" };
 
 export default async function CompleteSignupPage() {
-    const { user, email } = await requireGoogleUser();
+    const { user, email, success } = await requireGoogleUser();
+    if (!user || !email || !success) redirect("/login");
     const profile = await getProfile(user.id);
     if (profile) redirect(registrationDestination(profile, email));
     // Prefer the Google identity's suggestion over metadata from an older email signup.

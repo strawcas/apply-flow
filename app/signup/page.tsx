@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { session } from "@/app/_lib/session";
 import { AuthShell } from "@/app/_components/auth/auth-shell";
 import { SignupForm } from "@/app/signup/signup-form";
 
@@ -7,7 +9,8 @@ export const metadata: Metadata = {
     description: "Create your ApplyFlow account.",
 };
 
-export default function SignupPage() {
+export default async function SignupPage() {
+    if (await session()) redirect("/dashboard");
     return (
         <AuthShell>
             <SignupForm />

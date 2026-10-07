@@ -17,9 +17,6 @@ export default async function ApplicationsTable() {
                         {applications.length}
                     </span>
                 </div>
-                <span className="text-[var(--text-secondary,#52637d)] text-[14px] tracking-[0.6px] uppercase whitespace-nowrap">
-                    Sample data
-                </span>
             </div>
 
             <div className="flex items-center justify-between gap-4 pt-0 pb-[22px] px-6 max-[1000px]:items-stretch max-[1000px]:flex-col max-[1000px]:gap-[10px] max-[600px]:pt-0 max-[600px]:pb-[18px] max-[600px]:px-[17px]">
@@ -59,7 +56,7 @@ export default async function ApplicationsTable() {
             >
                 <table className="w-full min-w-350 border-collapse text-left whitespace-nowrap [&_thead_th]:[border-block:1px_solid_var(--line)] [&_thead_th]:bg-[var(--surface-subtle,#fafbfd)] [&_thead_th]:text-[var(--text-secondary,#42536d)] [&_thead_th]:text-[14px] [&_thead_th]:font-semibold [&_thead_th]:py-[18px] [&_thead_th]:px-5 [&_tbody_th]:h-24 [&_tbody_th]:[border-bottom:1px_solid_var(--border,#edf1f6)] [&_tbody_th]:font-normal [&_tbody_th]:p-5 [&_td]:h-24 [&_td]:[border-bottom:1px_solid_var(--border,#edf1f6)] [&_td]:font-normal [&_td]:p-5 [&_tr_>_:first-child]:pl-6 [&_tr_>_:last-child]:pr-5 [&_tbody_tr:last-child_>_*]:[border-bottom:0] [&_tbody_tr:hover]:bg-[var(--surface-hover,#fbfcff)]">
                     <caption className="absolute w-[1px] h-[1px] overflow-hidden [clip-path:inset(50%)] whitespace-nowrap">
-                        Sample job applications and their progress
+                        Job applications and their status
                     </caption>
                     <thead>
                         <tr>
