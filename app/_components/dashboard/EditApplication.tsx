@@ -2,7 +2,7 @@
 
 import Modal from "@/app/_components/Modal";
 import ApplicationForm from "@/app/_components/dashboard/ApplicationForm";
-import { updateApplicationAction } from "@/app/_actions/applicationActions";
+import { deleteApplicationAction, updateApplicationAction } from "@/app/_actions/applicationActions";
 import type { applications } from "@/drizzle/schema";
 
 export default function EditApplication({ applicationData }: { applicationData: typeof applications.$inferSelect }) {
@@ -12,6 +12,7 @@ export default function EditApplication({ applicationData }: { applicationData: 
                 type="edit"
                 initialValue={applicationData}
                 submitAction={updateApplicationAction.bind(null, applicationData.id)}
+                deleteAction={deleteApplicationAction.bind(null, applicationData.id)}
             />
         </Modal.Window>
     );

@@ -28,8 +28,13 @@ export async function createApplication(data: typeof applications.$inferInsert) 
 
     return application;
 }
-export async function deleteApplicationById(id: number) {
-    await db.delete(applications).where(eq(applications.id, id));
+export async function deleteApplicationById(id: number, userId: string) {
+    const deleted = await db
+        .delete(applications)
+        .where(and(eq(applications.id, id), eq(applications.userId, userId)))
+        .returning({ id: applications.id });
+
+    return deleted.length > 0;
 }
 
 export async function updateApplicationById(

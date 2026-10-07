@@ -19,13 +19,8 @@ export function GoogleForm({ intent, notice }: { intent: "login" | "signup"; not
     return (
         <form action={action}>
             <AuthLogo className="block w-16 h-16 object-contain mb-[27px]" />
-            <header className="mb-[34px] [&_h1]:mt-0 [&_h1]:mb-3 [&_h1]:font-[550] [&_h1]:text-[34px] [&_h1]:tracking-[-1.3px] [&_h1]:leading-[1.2] [&_h1]:mx-0 [&_p]:text-[var(--muted)] [&_p]:text-[16px] [&_p]:leading-[1.7] [&_p]:m-0 max-[700px]:[&_h1]:text-[32px]">
+            <header className="mb-[34px] [&_h1]:m-0 [&_h1]:font-[550] [&_h1]:text-[34px] [&_h1]:tracking-[-1.3px] [&_h1]:leading-[1.2] max-[700px]:[&_h1]:text-[32px]">
                 <h1>{isSignup ? "Create your account" : "Welcome back"}</h1>
-                <p>
-                    {isSignup
-                        ? "Start with Google, add your details, then confirm your email to finish signing up."
-                        : "Sign in with the Google account you used to join ApplyFlow."}
-                </p>
             </header>
             {message && (
                 <p role="status" className="text-[var(--blue-text,#1e40af)] bg-[var(--blue-soft,#eff6ff)] rounded-[6px] text-[16px] leading-[1.6] p-3">

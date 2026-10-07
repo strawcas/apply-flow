@@ -55,10 +55,24 @@ function getApplicationValues(formData: FormData) {
 }
 
 export async function deleteApplicationAction(applicationId: number) {
-    await deleteApplicationById(applicationId);
+    const user = await session("/login");
+    if (!user) redirect("/login");
+    if (!Number.isSafeInteger(applicationId) || applicationId <= 0) {
+        return { success: false, message: "This application could not be found. Refresh the page and try again." };
+    }
+
+    try {
+        if (!(await deleteApplicationById(applicationId, user.user_id))) {
+            return { success: false, message: "This application could not be found. Refresh the page and try again." };
+        }
+    } catch {
+        return { success: false, message: "Your application could not be deleted. Please try again." };
+    }
+
     revalidatePath("/applications");
     revalidatePath("/dashboard");
     revalidatePath("/calendar");
+    return { success: true, message: "Application deleted." };
 }
 
 function getString(formData: FormData, name: string) {
