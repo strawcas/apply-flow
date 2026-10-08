@@ -67,11 +67,6 @@ export default async function ApplicationsTable() {
                             <th scope="col">Employment type</th>
                             <th scope="col">Date applied</th>
                             <th scope="col">Next step</th>
-                            <th scope="col">
-                                <span className="absolute w-[1px] h-[1px] overflow-hidden [clip-path:inset(50%)] whitespace-nowrap">
-                                    Actions
-                                </span>
-                            </th>
                         </tr>
                     </thead>
                     <tbody>

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-    applicationDeadlines,
+    applicationCalendarItems,
     calendarDays,
     formatCalendarDate,
     formatCalendarTime,
@@ -68,7 +68,7 @@ test("existing database types round-trip to the calendar labels", () => {
 });
 
 test("deadlines use the actual deadline rather than an application status or submission date", () => {
-    const deadlines = applicationDeadlines([
+    const deadlines = applicationCalendarItems([
         { id: 1, companyName: "Example", jobTitle: "Designer", location: "Remote", deadline: "2026-10-12" },
         { id: 2, companyName: "Other", jobTitle: "Engineer", location: "", deadline: null },
         { id: 3, companyName: "Invalid", jobTitle: "Engineer", location: "", deadline: "2026-02-30" },
@@ -83,6 +83,34 @@ test("deadlines use the actual deadline rather than an application status or sub
         sortCalendarItems([timed, deadlines[0], early]).map((item) => item.id),
         ["early", "application-1", "timed"],
     );
+});
+
+test("application interviews use the scheduled date and keep distinct calendar identities from deadlines", () => {
+    const application = {
+        id: 1,
+        companyName: "Example",
+        jobTitle: "Designer",
+        location: "Manila",
+        deadline: "2026-10-12",
+        interviewDate: "2026-10-15",
+        interviewTime: "09:30",
+    };
+    const items = applicationCalendarItems([application]);
+    assert.equal(items.length, 2);
+    assert.equal(items[0].kind, "Deadline");
+    assert.equal(items[1].kind, "Interview");
+    assert.notEqual(items[0].id, items[1].id);
+    assert.equal(items[1].source, "application");
+    assert.equal(items[1].date, "2026-10-15");
+    assert.equal(items[1].time, "09:30");
+    assert.equal(items[1].location, null);
+    assert.equal(applicationCalendarItems([{ ...application, interviewTime: null }])[1].time, null);
+    const rescheduled = applicationCalendarItems([{ ...application, interviewDate: "2026-10-16" }])[1];
+    assert.equal(rescheduled.id, items[1].id);
+    assert.equal(rescheduled.date, "2026-10-16");
+    for (const interviewDate of [null, "", "2026-02-30"]) {
+        assert.equal(applicationCalendarItems([{ ...application, interviewDate }]).length, 1);
+    }
 });
 
 test("event validation rejects forged, malformed, and oversized values", () => {

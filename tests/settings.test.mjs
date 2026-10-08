@@ -67,6 +67,8 @@ const application = {
     status: "Applied",
     dateApplied: "2026-10-07",
     deadline: "2026-10-14",
+    interviewDate: "2026-10-15",
+    interviewTime: "09:30",
     jobUrl: null,
     source: "Website",
     location: "Remote",
@@ -87,6 +89,8 @@ test("CSV handles quotes, multiline notes, Unicode, nulls, empty exports, and sp
     assert.ok(csv.includes('"工程师 👩‍💻"'));
     assert.doesNotMatch(csv, /private-account-id/);
     assert.ok(csv.includes('"50000.00","60000.00","PHP"'));
+    assert.ok(csv.includes('"Interview date","Interview time"'));
+    assert.ok(csv.includes('"2026-10-15","09:30"'));
     assert.equal(applicationsCsv([]).split("\r\n").length, 2);
     for (const value of ["=SUM(1,2)", "+cmd", "-cmd", "@formula", "  =formula", "\ttext", "\rtext"]) {
         const safe = applicationsCsv([{ ...application, companyName: value }]);

@@ -26,6 +26,8 @@ test("application deletion authenticates, validates ownership, and refreshes aff
     };
     const hooks = registerHooks({
         resolve(specifier, context, next) {
+            if (specifier === "@/app/_lib/calendar")
+                return { shortCircuit: true, url: new URL("../app/_lib/calendar.ts", import.meta.url).href };
             if (modules[specifier])
                 return {
                     shortCircuit: true,

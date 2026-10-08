@@ -263,7 +263,7 @@ export default function SettingsOverview({ settings }: { settings: Settings }) {
                 <div className={styles.exportRow}>
                     <div>
                         <h3>Calendar</h3>
-                        <p className={styles.help}>Events and application deadlines. Times stay local.</p>
+                        <p className={styles.help}>Events, application deadlines, and interviews. Times stay local.</p>
                     </div>
                     <button
                         type="button"

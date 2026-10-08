@@ -6,7 +6,7 @@ See [Google signup setup](docs/google-auth-setup.md) for Google Cloud and Supaba
 
 ## Calendar
 
-The calendar supports month and agenda views, event search and type filters, and adding, editing, or deleting private interviews, deadlines, follow-ups, and reminders. Application deadlines also appear automatically and are edited on the Applications page. Dates and optional times are stored as entered in the user's local calendar; no email or device notifications are sent.
+The calendar supports month and agenda views, event search and type filters, and adding, editing, or deleting private interviews, deadlines, follow-ups, and reminders. Application deadlines and scheduled interviews also appear automatically and are edited on the Applications page. Dates and optional times are stored as entered in the user's local calendar; no email or device notifications are sent.
 
 Apply the calendar table migration using the configured `DATABASE_URL`:
 
@@ -16,11 +16,17 @@ node scripts/calendar-database.mjs --apply
 
 Run without `--apply` to check the actual table columns and browser access restrictions, or with `--inspect` to see column definitions and constraints. The calendar uses the existing `type`, `company`, `start_time`, and `end_time` columns. Event types are stored as `interview`, `deadline`, `follow-up`, and `other` (shown as Reminder); blank optional fields are stored as empty strings. The migration requires the existing `public.users` table and can be applied again safely. Run the calendar checks with `node --test tests/calendar.test.mjs tests/calendar-actions.test.mjs` and the PostgreSQL integration check with `node --test tests/calendar-db.test.mjs`.
 
+## Application interviews
+
+Choosing Interview in the application form shows an optional interview date and time below Status and Date applied. The date can stay blank until the interview is scheduled. Existing schedules stay visible after a status change, appear in the table's Next step column and the calendar, and are included in CSV and calendar exports. Clearing the date also clears the time and removes the generated calendar interview.
+
+Apply the two nullable interview columns with `node scripts/application-interviews-database.mjs --apply`, or run without `--apply` to verify that the configured database already has them. The migration adds date and time validation without changing existing application records or access rules. Run `node --test tests/application-actions.test.mjs tests/calendar.test.mjs tests/settings.test.mjs tests/settings-server.test.mjs` for the feature checks and `node --test tests/application-interviews-db.test.mjs` for persistence, migration, and account isolation checks using temporary tables.
+
 ## Settings
 
 Settings offers Light, Dark, and System appearance, calendar defaults (Month/Agenda, Sunday/Monday, 12/24-hour times), application defaults (currency and work arrangement), and private CSV/iCalendar downloads. Appearance saves in this browser and follows operating-system changes in System mode. Calendar and application preferences save to the signed-in account's `applyflow_settings` authentication metadata; no additional database migration is required. Application defaults only apply when creating an application.
 
-CSV downloads include every application field except the account ID. Calendar downloads include events and generated application deadlines, preserve local wall-clock times and end times, and support all-day events. Exports do not send invitations or notifications. Run the settings and export checks with `node --test tests/settings.test.mjs tests/settings-server.test.mjs`.
+CSV downloads include every application field except the account ID. Calendar downloads include events and generated application deadlines and interviews, preserve local wall-clock times and end times, and support all-day events. Exports do not send invitations or notifications. Run the settings and export checks with `node --test tests/settings.test.mjs tests/settings-server.test.mjs`.
 
 ## Local development
 

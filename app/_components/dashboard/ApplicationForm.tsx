@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import Modal, { useModal } from "@/app/_components/Modal";
 import { addApplication } from "@/app/_actions/applicationActions";
@@ -28,11 +28,26 @@ type ApplicationFormProps =
           deleteAction: DeleteAction;
       };
 
+function getJobPostingHref(value: string) {
+    try {
+        const url = new URL(value.trim());
+        return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+    } catch {
+        return null;
+    }
+}
+
 export default function ApplicationForm({ type, initialValue, submitAction, deleteAction }: ApplicationFormProps) {
     const isEdit = type === "edit";
     const settings = useSettings();
+    const jobUrlInputId = useId();
+    const [jobUrl, setJobUrl] = useState(initialValue?.jobUrl ?? "");
     const [status, setStatus] = useState(initialValue?.status ?? "Applied");
     const [dateApplied, setDateApplied] = useState(initialValue?.dateApplied ?? "");
+    const [interviewDate, setInterviewDate] = useState(initialValue?.interviewDate ?? "");
+    const [interviewTime, setInterviewTime] = useState(initialValue?.interviewTime ?? "");
+    const interviewHelpId = useId();
+    const jobPostingHref = getJobPostingHref(jobUrl);
 
     const action = type === "add" ? (submitAction ?? addApplication) : submitAction;
 
@@ -100,19 +115,50 @@ export default function ApplicationForm({ type, initialValue, submitAction, dele
                         </label>
                     </div>
 
-                    <label className="flex flex-col gap-2">
-                        <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
-                            Job posting URL
-                        </span>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                            <label
+                                htmlFor={jobUrlInputId}
+                                className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]"
+                            >
+                                Job posting URL
+                            </label>
+
+                            {jobPostingHref && (
+                                <a
+                                    href={jobPostingHref}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Open job posting in a new tab"
+                                    className="inline-flex items-center gap-1 rounded text-sm font-medium text-[var(--blue-text,var(--color-blue-600))] outline-none hover:underline focus-visible:ring-2 focus-visible:ring-blue-500/30"
+                                >
+                                    Open posting
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1.75"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="size-4"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M15 3h6v6M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                                    </svg>
+                                </a>
+                            )}
+                        </div>
 
                         <input
+                            id={jobUrlInputId}
                             name="jobUrl"
                             type="url"
                             placeholder="https://..."
-                            defaultValue={initialValue?.jobUrl ?? ""}
+                            value={jobUrl}
+                            onChange={(event) => setJobUrl(event.target.value)}
                             className={inputStyles}
                         />
-                    </label>
+                    </div>
 
                     <div className="grid gap-5 sm:grid-cols-2">
                         <label className="flex flex-col gap-2">
@@ -220,6 +266,53 @@ export default function ApplicationForm({ type, initialValue, submitAction, dele
                             />
                         </label>
                     </div>
+
+                    {status === "Interview" || interviewDate ? (
+                        <div className="space-y-2">
+                            <div className="grid gap-5 sm:grid-cols-2">
+                                <label className="flex flex-col gap-2">
+                                    <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                        Interview date
+                                    </span>
+                                    <input
+                                        name="interviewDate"
+                                        type="date"
+                                        min="1900-01-01"
+                                        max="9999-12-31"
+                                        value={interviewDate}
+                                        onChange={(event) => {
+                                            setInterviewDate(event.target.value);
+                                            if (!event.target.value) setInterviewTime("");
+                                        }}
+                                        aria-describedby={interviewHelpId}
+                                        className={inputStyles}
+                                    />
+                                </label>
+                                <label className="flex flex-col gap-2">
+                                    <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">
+                                        Interview time (optional)
+                                    </span>
+                                    <input
+                                        name="interviewTime"
+                                        type="time"
+                                        value={interviewTime}
+                                        onChange={(event) => setInterviewTime(event.target.value)}
+                                        disabled={!interviewDate}
+                                        aria-describedby={interviewHelpId}
+                                        className={`${inputStyles} disabled:opacity-50`}
+                                    />
+                                </label>
+                            </div>
+                            <p id={interviewHelpId} className="m-0 text-xs text-[var(--text-muted,var(--color-zinc-500))]">
+                                Use your local time. Leave the date blank until the interview is scheduled.
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            <input type="hidden" name="interviewDate" value={interviewDate} />
+                            <input type="hidden" name="interviewTime" value={interviewTime} />
+                        </>
+                    )}
 
                     <div>
                         <span className="text-sm font-medium text-[var(--text-secondary,var(--color-zinc-700))]">

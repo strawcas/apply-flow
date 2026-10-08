@@ -87,33 +87,49 @@ export function sortCalendarItems(items: CalendarItem[]) {
     );
 }
 
-export function applicationDeadlines(
+export function applicationCalendarItems(
     applications: {
         id: number;
         companyName: string;
         jobTitle: string;
         deadline: string | null;
+        interviewDate?: string | null;
+        interviewTime?: string | null;
         location: string;
     }[],
 ): CalendarItem[] {
-    return applications.flatMap((application) =>
-        application.deadline && isCalendarDate(application.deadline)
-            ? [
-                  {
-                      id: `application-${application.id}`,
-                      source: "application" as const,
-                      title: application.jobTitle,
-                      company: application.companyName,
-                      kind: "Deadline" as const,
-                      date: application.deadline,
-                      time: null,
-                      endTime: null,
-                      location: application.location || null,
-                      notes: "This deadline comes from your application. Update it from the Applications page.",
-                  },
-              ]
-            : [],
-    );
+    return applications.flatMap((application) => {
+        const items: CalendarItem[] = [];
+        if (application.deadline && isCalendarDate(application.deadline)) {
+            items.push({
+                id: `application-${application.id}`,
+                source: "application",
+                title: application.jobTitle,
+                company: application.companyName,
+                kind: "Deadline",
+                date: application.deadline,
+                time: null,
+                endTime: null,
+                location: application.location || null,
+                notes: "This deadline comes from your application. Update it from the Applications page.",
+            });
+        }
+        if (application.interviewDate && isCalendarDate(application.interviewDate)) {
+            items.push({
+                id: `application-${application.id}-interview`,
+                source: "application",
+                title: application.jobTitle,
+                company: application.companyName,
+                kind: "Interview",
+                date: application.interviewDate,
+                time: application.interviewTime || null,
+                endTime: null,
+                location: null,
+                notes: "This interview comes from your application. Update its date and time from the Applications page.",
+            });
+        }
+        return items;
+    });
 }
 
 export function parseCalendarEvent(

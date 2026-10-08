@@ -909,11 +909,16 @@ export const applications = pgTable.withRLS("applications", {
     currency: text(),
     dateApplied: date("date_applied"),
     deadline: date(),
+    interviewDate: date("interview_date"),
+    interviewTime: text("interview_time"),
     notes: text(),
     userId: uuid("user_id")
         .notNull()
         .references(() => users.userId, { onDelete: "cascade" }),
-});
+}, (table) => [
+    check("applications_interview_date_check", sql`${table.interviewDate} BETWEEN DATE '1900-01-01' AND DATE '9999-12-31'`),
+    check("applications_interview_time_check", sql`${table.interviewTime} IS NULL OR (${table.interviewDate} IS NOT NULL AND ${table.interviewTime} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$')`),
+]);
 
 export const calendarEvents = pgTable.withRLS(
     "calendar_events",

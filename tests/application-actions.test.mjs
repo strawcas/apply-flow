@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { registerHooks } from "node:module";
 import test from "node:test";
 
-test("saved postings have no submission date when created or edited, and can later become applied", async () => {
+test("application saves handle saved statuses and validate optional interview schedules", async () => {
     const writes = [];
     globalThis.__applicationStatusTest = {
         session: async () => ({ user_id: "current-user" }),
@@ -27,6 +27,8 @@ test("saved postings have no submission date when created or edited, and can lat
     };
     const hooks = registerHooks({
         resolve(specifier, context, next) {
+            if (specifier === "@/app/_lib/calendar")
+                return { shortCircuit: true, url: new URL("../app/_lib/calendar.ts", import.meta.url).href };
             if (modules[specifier])
                 return {
                     shortCircuit: true,
@@ -70,6 +72,45 @@ test("saved postings have no submission date when created or edited, and can lat
         form.set("status", "Saved");
         await addApplication(form);
         assert.equal(writes[3].dateApplied, null);
+        assert.equal(writes[3].interviewDate, null);
+        assert.equal(writes[3].interviewTime, null);
+
+        form.set("status", "Interview");
+        form.set("interviewDate", "2026-10-15");
+        form.set("interviewTime", "09:30");
+        await addApplication(form);
+        assert.equal(writes.at(-1).interviewDate, "2026-10-15");
+        assert.equal(writes.at(-1).interviewTime, "09:30");
+        form.set("interviewDate", "2026-10-16");
+        form.set("interviewTime", "14:00");
+        await updateApplicationAction(7, form);
+        assert.equal(writes.at(-1).interviewDate, "2026-10-16");
+        assert.equal(writes.at(-1).interviewTime, "14:00");
+        // Preserve the interview history when the application progresses.
+        form.set("status", "Offer");
+        await updateApplicationAction(7, form);
+        assert.equal(writes.at(-1).interviewDate, "2026-10-16");
+        form.set("interviewTime", "");
+        await updateApplicationAction(7, form);
+        assert.equal(writes.at(-1).interviewTime, null);
+        form.set("interviewDate", "");
+        await updateApplicationAction(7, form);
+        assert.equal(writes.at(-1).interviewDate, null);
+
+        const count = writes.length;
+        for (const date of ["2026-02-30", "2026-13-01", "1899-12-31", "not-a-date"]) {
+            form.set("interviewDate", date);
+            await assert.rejects(addApplication(form), /valid interview date/);
+        }
+        form.set("interviewDate", "2026-10-15");
+        for (const time of ["24:00", "09:60", "9:30", "not-a-time"]) {
+            form.set("interviewTime", time);
+            await assert.rejects(updateApplicationAction(7, form), /valid interview time/);
+        }
+        form.set("interviewDate", "");
+        form.set("interviewTime", "09:30");
+        await assert.rejects(addApplication(form), /valid interview time/);
+        assert.equal(writes.length, count);
     } finally {
         hooks.deregister();
         delete globalThis.__applicationStatusTest;

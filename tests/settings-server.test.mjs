@@ -12,6 +12,8 @@ test("settings and export endpoints authenticate every request and only access t
         jobTitle: "Engineer",
         status: "Applied",
         deadline: "2026-10-14",
+        interviewDate: "2026-10-16",
+        interviewTime: "09:30",
         location: "",
         createdAt: new Date("2026-10-07T00:00:00Z"),
     };
@@ -120,7 +122,7 @@ test("settings and export endpoints authenticate every request and only access t
             assert.deepEqual(calls.splice(0), []);
             form.set("timeFormat", "24h");
         });
-        await t.test("downloads private CSV and calendar events plus automatic application deadlines", async () => {
+        await t.test("downloads private CSV and calendar events plus application deadlines and interviews", async () => {
             const csv = await request("applications");
             assert.equal(csv.status, 200);
             assert.equal(csv.headers.get("Cache-Control"), "private, no-store");
@@ -131,9 +133,10 @@ test("settings and export endpoints authenticate every request and only access t
             assert.equal(ics.headers.get("Content-Type"), "text/calendar; charset=utf-8");
             assert.equal(ics.headers.get("X-Content-Type-Options"), "nosniff");
             const contents = await ics.text();
-            assert.equal((contents.match(/BEGIN:VEVENT/g) ?? []).length, 2);
+            assert.equal((contents.match(/BEGIN:VEVENT/g) ?? []).length, 3);
             assert.ok(contents.includes("DTSTART;VALUE=DATE:20261014"));
             assert.ok(contents.includes("DTSTART:20261015T140000"));
+            assert.ok(contents.includes("DTSTART:20261016T093000"));
             assert.deepEqual(calls.splice(0), [["applications"], ["events"]]);
             assert.equal((await request("unknown")).status, 404);
             assert.deepEqual(calls.splice(0), []);

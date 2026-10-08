@@ -4,6 +4,7 @@ import { createApplication, deleteApplicationById, updateApplicationById } from 
 import { session } from "@/app/_lib/session";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { isCalendarDate } from "@/app/_lib/calendar";
 
 export async function addApplication(formData: FormData) {
     const user = await session("/login");
@@ -32,6 +33,14 @@ export async function updateApplicationAction(applicationId: number, formData: F
 
 function getApplicationValues(formData: FormData) {
     const status = getString(formData, "status");
+    const interviewDate = getOptionalString(formData, "interviewDate");
+    const interviewTime = getOptionalString(formData, "interviewTime");
+    if (interviewDate && !isCalendarDate(interviewDate)) {
+        throw new Error("Enter a valid interview date from 1900 onward.");
+    }
+    if (interviewTime && (!interviewDate || !/^([01]\d|2[0-3]):[0-5]\d$/.test(interviewTime))) {
+        throw new Error("Enter a valid interview time with an interview date.");
+    }
     return {
         companyName: getString(formData, "companyName"),
         jobTitle: getString(formData, "jobTitle"),
@@ -50,6 +59,8 @@ function getApplicationValues(formData: FormData) {
 
         dateApplied: status === "Saved" ? null : getOptionalString(formData, "dateApplied"),
         deadline: getOptionalString(formData, "deadline"),
+        interviewDate,
+        interviewTime,
         notes: getOptionalString(formData, "notes"),
     };
 }

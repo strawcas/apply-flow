@@ -2,10 +2,11 @@
 
 import type { applications } from "@/drizzle/schema";
 type Application = typeof applications.$inferSelect;
-import Icon from "@/app/_components/dashboard/dashboard-icon";
 import Modal, { useModal } from "@/app/_components/Modal";
 import EditApplication from "@/app/_components/dashboard/EditApplication";
 import type { ApplicationStatus } from "@/app/_lib/application-status";
+import { formatCalendarTime } from "@/app/_lib/calendar";
+import { useSettings } from "./settings-provider";
 
 const statusStyles: Record<ApplicationStatus, string> = {
     Saved: "text-[var(--text-secondary,#52637d)] bg-[var(--surface-subtle,#f0f3f7)]",
@@ -36,6 +37,7 @@ export default function ApplicationsTableRow({ applicationData }: { applicationD
 
 function ApplicationRow({ applicationData }: { applicationData: Application }) {
     const { open } = useModal();
+    const { timeFormat } = useSettings();
 
     return (
         <tr
@@ -89,24 +91,24 @@ function ApplicationRow({ applicationData }: { applicationData: Application }) {
 
             <td>
                 <div className="grid gap-[6px] text-[14px] text-[var(--text-secondary,#52637d)]">
+                    {applicationData.interviewDate && (
+                        <span className="text-[var(--purple-text,#7957b0)] text-[16px]">
+                            Interview:{" "}
+                            <time
+                                dateTime={`${applicationData.interviewDate}${applicationData.interviewTime ? `T${applicationData.interviewTime}` : ""}`}
+                            >
+                                {applicationData.interviewDate}
+                                {applicationData.interviewTime &&
+                                    ` at ${formatCalendarTime(applicationData.interviewTime, timeFormat)}`}
+                            </time>
+                        </span>
+                    )}
                     {applicationData.deadline && (
                         <span className="text-[var(--text-primary,#33465f)] text-[16px]">
                             Deadline: {applicationData.deadline}
                         </span>
                     )}
                 </div>
-            </td>
-
-            <td className="w-16">
-                <Modal.Open opens="edit-application">
-                    <button
-                        type="button"
-                        className="inline-grid place-items-center w-11 h-11 [border:1px_solid_transparent] rounded-[6px] bg-transparent text-[var(--text-secondary,#52637d)] p-0 [&_svg]:w-5 [&_svg]:h-5"
-                        aria-label={`Edit application for ${applicationData.companyName} ${applicationData.jobTitle}`}
-                    >
-                        <Icon name="more" />
-                    </button>
-                </Modal.Open>
                 <div className="cursor-auto whitespace-normal">
                     <EditApplication applicationData={applicationData} />
                 </div>

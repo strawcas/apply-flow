@@ -1,6 +1,6 @@
 import { getAllApplicationsCurrentUser } from "@/app/_db/applications";
 import { getCalendarEventsCurrentUser } from "@/app/_db/calendar";
-import { applicationDeadlines, sortCalendarItems } from "@/app/_lib/calendar";
+import { applicationCalendarItems, sortCalendarItems } from "@/app/_lib/calendar";
 import { applicationsCsv, calendarIcs } from "@/app/_lib/data-export";
 import { session } from "@/app/_lib/session";
 
@@ -19,7 +19,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ for
                 ? applicationsCsv(applications)
                 : calendarIcs(
                       sortCalendarItems([
-                          ...applicationDeadlines(applications),
+                          ...applicationCalendarItems(applications),
                           ...(await getCalendarEventsCurrentUser()),
                       ]),
                   );

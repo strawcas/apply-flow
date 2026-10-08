@@ -51,7 +51,7 @@ function CalendarContent({ items, initialToday }: { items: CalendarItem[]; initi
     const [kind, setKind] = useState("");
     const [query, setQuery] = useState("");
     const [editingEvent, setEditingEvent] = useState<CalendarItem | null>(null);
-    const [deadline, setDeadline] = useState<CalendarItem | null>(null);
+    const [applicationEvent, setApplicationEvent] = useState<CalendarItem | null>(null);
     const [message, setMessage] = useState("");
     const gridRef = useRef<HTMLTableElement>(null);
     const focusDate = useRef<string | null>(null);
@@ -126,8 +126,8 @@ function CalendarContent({ items, initialToday }: { items: CalendarItem[]; initi
     function openEvent(item: CalendarItem) {
         selectDate(item.date);
         if (item.source === "application") {
-            setDeadline(item);
-            open("calendar-deadline");
+            setApplicationEvent(item);
+            open("calendar-application");
         } else {
             setEditingEvent(item);
             open("calendar-event");
@@ -494,7 +494,7 @@ function CalendarContent({ items, initialToday }: { items: CalendarItem[]; initi
                     </section>
                     <p className={styles.scheduleNote}>
                         <Icon name="applications" />
-                        <span>Application deadlines appear here automatically.</span>
+                        <span>Application deadlines and scheduled interviews appear here automatically.</span>
                     </p>
                 </aside>
             </div>
@@ -505,17 +505,20 @@ function CalendarContent({ items, initialToday }: { items: CalendarItem[]; initi
             >
                 <CalendarEventForm event={editingEvent} date={selectedDate} onSaved={saved} />
             </Modal.Window>
-            <Modal.Window name="calendar-deadline" aria-label="Application deadline">
-                {deadline && (
+            <Modal.Window
+                name="calendar-application"
+                aria-label={`Application ${applicationEvent?.kind.toLowerCase() ?? "event"}`}
+            >
+                {applicationEvent && (
                     <>
                         <header className={styles.dialogHeader}>
                             <div>
-                                <p className={styles.eyebrow}>APPLICATION DEADLINE</p>
-                                <h2 className={styles.dialogTitle}>{deadline.company}</h2>
-                                <p className={styles.secondary}>{deadline.title}</p>
+                                <p className={styles.eyebrow}>APPLICATION {applicationEvent.kind.toUpperCase()}</p>
+                                <h2 className={styles.dialogTitle}>{applicationEvent.company}</h2>
+                                <p className={styles.secondary}>{applicationEvent.title}</p>
                             </div>
                             <Modal.Close>
-                                <button type="button" className={styles.iconButton} aria-label="Close deadline details">
+                                <button type="button" className={styles.iconButton} aria-label="Close application event details">
                                     <Icon name="close" />
                                 </button>
                             </Modal.Close>
@@ -523,15 +526,24 @@ function CalendarContent({ items, initialToday }: { items: CalendarItem[]; initi
                         <div className={styles.deadlineDetails}>
                             <p>
                                 <Icon name="calendar" />
-                                {formatCalendarDate(deadline.date, {
+                                {formatCalendarDate(applicationEvent.date, {
                                     weekday: "long",
                                     month: "long",
                                     day: "numeric",
                                     year: "numeric",
                                 })}
                             </p>
-                            {deadline.location && <p className={styles.secondary}>{deadline.location}</p>}
-                            <p className={styles.deadlineNote}>{deadline.notes}</p>
+                            {applicationEvent.time && (
+                                <p className={styles.secondary}>
+                                    {formatCalendarTimeRange(
+                                        applicationEvent.time,
+                                        applicationEvent.endTime,
+                                        settings.timeFormat,
+                                    )}
+                                </p>
+                            )}
+                            {applicationEvent.location && <p className={styles.secondary}>{applicationEvent.location}</p>}
+                            <p className={styles.deadlineNote}>{applicationEvent.notes}</p>
                         </div>
                         <footer className={styles.formFooter}>
                             <Modal.Close>
@@ -557,7 +569,7 @@ function EventCard({ item, onClick }: { item: CalendarItem; onClick: () => void 
             type="button"
             className={styles.eventCard}
             onClick={onClick}
-            aria-label={`${item.source === "event" ? "Edit event" : "View deadline"}: ${item.title}${item.company ? ` at ${item.company}` : ""}`}
+            aria-label={`${item.source === "event" ? "Edit event" : `View ${item.kind.toLowerCase()}`}: ${item.title}${item.company ? ` at ${item.company}` : ""}`}
         >
             <span className={styles.eventCardTop}>
                 <span className={`${styles.kindBadge} ${kindStyles[item.kind]}`}>
