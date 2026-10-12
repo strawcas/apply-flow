@@ -1,0 +1,146 @@
+.panel {
+    container-type: inline-size;
+}
+
+.toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px 22px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--text-secondary, #52637d);
+}
+
+.search > svg {
+    flex-shrink: 0;
+}
+
+.search:focus-within {
+    border-color: var(--border-strong, #93b8ff);
+}
+
+.searchInput {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    padding: 0;
+    font-size: 14px;
+}
+
+.searchInput::placeholder {
+    color: var(--text-muted, #77849a);
+    opacity: 1;
+}
+
+.selectControl {
+    position: relative;
+    min-width: 0;
+}
+
+.select {
+    appearance: none;
+    width: 100%;
+    min-width: 156px;
+    height: 48px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--text-secondary, #42536d);
+    padding: 0 40px 0 14px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.select:hover {
+    border-color: var(--border-strong, #93b8ff);
+    background: var(--surface-hover, #fbfcff);
+}
+
+.sortControl .select {
+    min-width: 188px;
+    padding-left: 42px;
+}
+
+.chevron,
+.sortIcon {
+    position: absolute;
+    inset-block: 0;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary, #52637d);
+    pointer-events: none;
+}
+
+.chevron {
+    right: 14px;
+}
+
+.chevron > svg {
+    width: 16px;
+    height: 16px;
+}
+
+.sortIcon {
+    left: 14px;
+}
+
+.sortIcon > svg {
+    width: 18px;
+    height: 18px;
+}
+
+.clearButton {
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    background: var(--surface, #fff);
+    color: var(--accent-foreground, #2563eb);
+    font-size: 14px;
+}
+
+.clearButton:hover {
+    background: var(--surface-hover, #fbfcff);
+}
+
+@container (max-width: 720px) {
+    .toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .search {
+        grid-column: 1 / -1;
+    }
+
+    .select,
+    .sortControl .select {
+        min-width: 0;
+    }
+}
+
+@container (max-width: 360px) {
+    .toolbar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .toolbar {
+        padding: 0 16px 18px;
+    }
+}

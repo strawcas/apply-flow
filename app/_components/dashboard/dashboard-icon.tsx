@@ -16,6 +16,7 @@ export type IconName =
     | "more"
     | "chevron-left"
     | "chevron-right"
+    | "chevron-down"
     | "sort";
 const paths: Record<IconName, string> = {
     calendar: "M3 5h18v16H3z M3 10h18 M7 3v4 M17 3v4 M7 14h2 M15 14h2 M7 17h2",
@@ -35,6 +36,7 @@ const paths: Record<IconName, string> = {
     more: "M5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2 M12 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2 M19 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2",
     "chevron-left": "M15 6l-6 6 6 6",
     "chevron-right": "M9 6l6 6-6 6",
+    "chevron-down": "M6 9l6 6 6-6",
     sort: "M8 4v16 M4 8l4-4 4 4 M16 20V4 M12 16l4 4 4-4",
 };
 export default function DashboardIcon({ name }: { name: IconName }) {
