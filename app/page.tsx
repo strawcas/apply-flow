@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AuthLogo } from "./_components/auth/auth-logo";
 import Icon, { type IconName } from "./_components/dashboard/dashboard-icon";
 import ThemeToggle from "./_components/theme-toggle";
+import styles from "./page.module.css";
 
 export const metadata: Metadata = {
     title: "ApplyFlow | Job application tracker",
@@ -264,19 +265,26 @@ export default function HomePage() {
                         ))}
                     </ol>
                 </section>
-                <section
-                    aria-label="Get started"
-                    className="flex flex-wrap items-center justify-center gap-6 bg-[var(--green-soft,#eaf0e4)] py-12 px-6"
-                >
-                    <Link
-                        href="/signup"
-                        className="inline-flex items-center justify-center gap-5 font-semibold rounded-[8px] min-h-[54px] [transition:background_.18s,_transform_.18s] text-white bg-[var(--blue)] py-[13px] px-[23px] hover:bg-[#194bbb] hover:[transform:translateY(-2px)]"
-                    >
-                        Create account <Icon name="arrow" />
-                    </Link>
-                    <Link href="/login" className="font-semibold hover:underline">
-                        Log in
-                    </Link>
+                <section aria-labelledby="get-started-heading" className={styles.cta}>
+                    <div className={styles.ctaOrbit} aria-hidden="true" />
+                    <span className={styles.ctaSpark} aria-hidden="true">
+                        ✳
+                    </span>
+                    <div className={styles.ctaCopy}>
+                        <h2 id="get-started-heading" className={styles.ctaHeading}>
+                            Your next chapter
+                            <br />
+                            <span>starts here.</span>
+                        </h2>
+                    </div>
+                    <div className={styles.ctaActions}>
+                        <Link href="/signup" className={styles.ctaButton}>
+                            Create account <Icon name="arrow" />
+                        </Link>
+                        <Link href="/login" className={styles.ctaLogin}>
+                            Log in
+                        </Link>
+                    </div>
                 </section>
             </main>
             <footer className="[width:min(1240px,_calc(100%_-_96px))] flex items-center justify-between gap-6 mx-auto py-8 [&_>_p]:text-[13px] [&_>_p]:text-[var(--muted)] [&_>_span]:text-[13px] [&_>_span]:text-[var(--muted)] max-[1100px]:[width:calc(100%_-_64px)] max-[850px]:flex-wrap max-[850px]:[&_>_p]:hidden max-[600px]:[width:calc(100%_-_40px)] max-[600px]:gap-[14px] max-[600px]:[&_>_span]:text-[12px]">
