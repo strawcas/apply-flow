@@ -8,6 +8,12 @@
         color-scheme: light;
     }
 
+    @media (prefers-reduced-motion: no-preference) {
+        html:has([data-ui="landing"]) {
+            scroll-behavior: smooth;
+        }
+    }
+
     /* Light colors remain as fallbacks in the UI; these semantic tokens supply
        a consistent dark palette across landing, auth, workspace, and dialogs. */
     :root.dark {
