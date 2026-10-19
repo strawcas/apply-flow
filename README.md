@@ -1,64 +1,157 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ApplyFlow
 
-## Google authentication
+ApplyFlow is a job application tracker for saving opportunities, following application progress, and organizing deadlines and interviews in one place.
 
-See [Google signup setup](docs/google-auth-setup.md) for Google Cloud and Supabase configuration, environment variables, the profile migration, and verification steps. Registration requires a full name, birthdate, and a separate email confirmation before dashboard access.
+## Features
 
-## Calendar
+- **Dashboard:** application totals, status summaries, and recent applications.
+- **Applications:** create, edit, delete, search, filter by status, and sort by date or company. Track job links, salary ranges, work arrangements, notes, deadlines, and interview schedules.
+- **Application statuses:** Saved, Applied, In review, Interview, Offer, and Rejected.
+- **Calendar:** month and agenda views with search, event-type filters, and private interviews, deadlines, follow-ups, and reminders. Application deadlines and scheduled interviews appear automatically.
+- **Accounts:** Google sign-in, profile completion, separate registration email confirmation, and profile editing.
+- **Settings:** Light, Dark, and System appearance; calendar preferences; default currency and work arrangement; CSV and iCalendar exports.
 
-The calendar supports month and agenda views, event search and type filters, and adding, editing, or deleting private interviews, deadlines, follow-ups, and reminders. Application deadlines and scheduled interviews also appear automatically and are edited on the Applications page. Dates and optional times are stored as entered in the user's local calendar; no email or device notifications are sent.
+## Tech stack
 
-Apply the calendar table migration using the configured `DATABASE_URL`:
+Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, Supabase Auth, PostgreSQL with Drizzle ORM, and Nodemailer with Gmail SMTP. Dependency versions are recorded in [package.json](package.json) and [package-lock.json](package-lock.json).
 
-```bash
+## Local setup
+
+You will need Node.js 24 and npm, a Supabase project with a PostgreSQL connection string, Google OAuth credentials, and a Gmail account with an app password for registration emails. Node.js 24 supports the TypeScript imports and module hooks used by the tests.
+
+Run the following commands from the repository root.
+
+### 1. Install dependencies
+
+```sh
+npm ci
+```
+
+### 2. Configure environment variables
+
+Create a `.env` file in the repository root and replace these placeholders:
+
+```dotenv
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+DATABASE_URL=YOUR_SERVER_POSTGRES_CONNECTION_STRING
+GMAIL_ADDRESS=YOUR_SENDING_GMAIL_ADDRESS
+GMAIL_APP_PASSWORD=YOUR_GMAIL_APP_PASSWORD
+```
+
+Use `.env` for this setup because the database and authentication utility scripts load it through `dotenv/config`. Keep `DATABASE_URL` and Gmail credentials on the server; `.env` files are ignored by Git. Use a Gmail app password for `GMAIL_APP_PASSWORD`.
+
+### 3. Configure Google authentication
+
+Follow the [Google signup and email confirmation guide](docs/google-auth-setup.md) to configure the Google OAuth client, enable the Google provider in Supabase, and allow the application's callback URLs.
+
+For local development, the app callback is `http://localhost:3000/auth/callback?flow=*` in Supabase's redirect allowlist. Google Cloud uses the Supabase provider callback, typically `https://YOUR_PROJECT.supabase.co/auth/v1/callback`.
+
+### 4. Prepare the database
+
+**The repository does not include a complete migration for an empty database.** The application interview migration requires an existing `public.applications` table matching the `applications` definition in [drizzle/schema.ts](drizzle/schema.ts). Provision that base table separately if you are starting with a new Supabase project. Its `user_id` references `public.users.user_id`, so create the users table first.
+
+Apply the users migration:
+
+```sh
+node scripts/auth-database.mjs --apply
+```
+
+This creates the registration table on a new installation or renames the previous `public.applyflow_profiles` table to `public.users`, preserving existing registrations. Supabase's `auth.users` table is separate.
+
+Once the base `public.applications` table exists, apply the calendar and interview migrations:
+
+```sh
 node scripts/calendar-database.mjs --apply
+node scripts/application-interviews-database.mjs --apply
 ```
 
-Run without `--apply` to check the actual table columns and browser access restrictions, or with `--inspect` to see column definitions and constraints. The calendar uses the existing `type`, `company`, `start_time`, and `end_time` columns. Event types are stored as `interview`, `deadline`, `follow-up`, and `other` (shown as Reminder); blank optional fields are stored as empty strings. The migration requires the existing `public.users` table and can be applied again safely. Run the calendar checks with `node --test tests/calendar.test.mjs tests/calendar-actions.test.mjs` and the PostgreSQL integration check with `node --test tests/calendar-db.test.mjs`.
+The calendar migration creates `public.calendar_events`; the interview migration adds nullable `interview_date` and `interview_time` columns. These scripts can be rerun. Run each script without `--apply` to check its table or columns; use `node scripts/calendar-database.mjs --inspect` for calendar column definitions and constraints.
 
-## Application interviews
+Use the scripts above and the SQL in [supabase/migrations](supabase/migrations) for these changes. The older introspected migration under `drizzle/` includes Supabase-managed schemas and is unsuitable as an application bootstrap.
 
-Choosing Interview in the application form shows an optional interview date and time below Status and Date applied. The date can stay blank until the interview is scheduled. Existing schedules stay visible after a status change, appear in the table's Next step column and the calendar, and are included in CSV and calendar exports. Clearing the date also clears the time and removes the generated calendar interview.
+### 5. Start the app
 
-Apply the two nullable interview columns with `node scripts/application-interviews-database.mjs --apply`, or run without `--apply` to verify that the configured database already has them. The migration adds date and time validation without changing existing application records or access rules. Run `node --test tests/application-actions.test.mjs tests/calendar.test.mjs tests/settings.test.mjs tests/settings-server.test.mjs` for the feature checks and `node --test tests/application-interviews-db.test.mjs` for persistence, migration, and account isolation checks using temporary tables.
-
-## Settings
-
-Settings offers Light, Dark, and System appearance, calendar defaults (Month/Agenda, Sunday/Monday, 12/24-hour times), application defaults (currency and work arrangement), and private CSV/iCalendar downloads. Appearance saves in this browser and follows operating-system changes in System mode. Calendar and application preferences save to the signed-in account's `applyflow_settings` authentication metadata; no additional database migration is required. Application defaults only apply when creating an application.
-
-CSV downloads include every application field except the account ID. Calendar downloads include events and generated application deadlines and interviews, preserve local wall-clock times and end times, and support all-day events. Exports do not send invitations or notifications. Run the settings and export checks with `node --test tests/settings.test.mjs tests/settings-server.test.mjs`.
-
-## Local development
-
-First, run the development server:
-
-```bash
+```sh
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Sign up with Google, complete your full name and birthdate, and confirm your email before accessing the dashboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To check Supabase provider settings and verify SMTP credentials without sending an email:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+node scripts/check-google-auth.mjs --email
+```
 
-## Learn More
+## Application behavior
 
-To learn more about Next.js, take a look at the following resources:
+### Registration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A Google identity alone does not grant dashboard access. ApplyFlow also requires a completed profile and its own email confirmation. Confirmation links expire after 24 hours, and resend requests have a 60-second cooldown. See the [authentication guide](docs/google-auth-setup.md) for the complete flow and verification checklist.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Interviews and calendar events
 
-## Deploy on Vercel
+Choosing **Interview** in an application shows an optional interview date and time. Scheduled interviews remain visible after a status change and appear in the application's **Next step** column, calendar, and exports. Clearing the date also clears the time and removes the generated calendar interview.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Edit generated deadlines and interviews on the **Applications** page. Manage manually created events on the **Calendar** page. Calendar dates and times preserve the user's local wall-clock values, including all-day events and optional end times. Calendar reminders and exports do not send email or device notifications or invitations.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Preferences and exports
+
+Appearance is saved in the current browser, with System mode following operating-system changes. Calendar preferences (Month/Agenda, Sunday/Monday, and 12/24-hour time) and application defaults are saved in the signed-in account's `applyflow_settings` authentication metadata. No additional settings migration is required. Application defaults apply only to new applications.
+
+Download data from **Settings**. CSV exports include all application fields except the account ID. iCalendar (`.ics`) exports include private calendar events plus generated application deadlines and interviews.
+
+## Development and checks
+
+| Command         | Purpose                            |
+| --------------- | ---------------------------------- |
+| `npm run dev`   | Start the development server       |
+| `npm run build` | Create a production build          |
+| `npm run start` | Serve a completed production build |
+| `npm run lint`  | Run ESLint                         |
+
+Generate Next.js route types before checking TypeScript, especially on a fresh checkout:
+
+```sh
+npx next typegen
+npx tsc --noEmit
+```
+
+Run focused application-list, calendar, settings, and export tests without a database:
+
+```sh
+node --test tests/application-list.test.mjs tests/calendar.test.mjs tests/settings.test.mjs
+```
+
+Run the full test suite after configuring `DATABASE_URL` and preparing the database:
+
+```sh
+node --test "tests/*.test.mjs"
+```
+
+The `*-db.test.mjs` integration tests require PostgreSQL access and use temporary tables with transaction rollback. The application database tests also require the existing `public.applications` schema. Other tests cover authentication, registration, profile updates, application actions, calendar actions, settings, and exports. A real Google sign-in and confirmation-email round trip must be verified with a configured provider and browser account.
+
+## Project structure
+
+```text
+app/
+  (dashboard)/       Dashboard, applications, calendar, profile, and settings routes
+  _actions/          Server Actions for authentication and account data
+  _components/       Shared UI and dashboard components
+  _db/               Database connection and queries
+  _lib/              Authentication, calendar, settings, and export utilities
+  auth/              OAuth callback and email confirmation
+docs/                Authentication setup guide
+drizzle/             Database schema, relations, and older introspection output
+scripts/             Database migration and authentication checks
+supabase/migrations/ Application SQL migrations
+tests/               Node.js unit and database integration tests
+```
+
+## Production
+
+Configure the same environment variables on your hosting provider. Set `NEXT_PUBLIC_SITE_URL` to the app's public HTTPS origin and add the production origin and callback URLs to Google Cloud and Supabase as described in the [authentication guide](docs/google-auth-setup.md). Apply the database migrations before using the app.
+
+Run `npm run build`, then `npm run start` on a Node.js host, or use a hosting provider that supports Next.js server features. The app requires server execution for authentication, database access, and email delivery.
